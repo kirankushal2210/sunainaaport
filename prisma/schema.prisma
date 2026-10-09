@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  client      String
+  year        String
+  posterAsset String
+  aspectRatio String
+  metrics     String[]
+  content     String
+  created_at  DateTime @default(now())
+}
+
+model Experience {
+  id          String   @id @default(cuid())
+  company     String
+  role        String
+  duration    String
+  description String[]
+}
+
+model ContactMessage {
+  id               String   @id @default(cuid())
+  name             String
+  email            String
+  serviceRequested String
+  budget           String
+  message          String
+  created_at       DateTime @default(now())
+}
+
+// NextAuth Schema
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  
+  role          String          @default("user") // "admin" or "user"
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@id([provider, providerAccountId])
+}
+ 
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@id([identifier, token])
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  service     String
+  details     String
+  created_at  DateTime @default(now())
+}

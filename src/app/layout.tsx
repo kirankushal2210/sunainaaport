@@ -14,11 +14,11 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://example.com"),
-  title: "Sunaina — Next.js Developer & Creative Technologist",
-  description: "Portfolio showcasing full-stack applications, interactive 3D device stages, branding, and digital design.",
+  title: "Sunaina — Graphic Designer & Creative Technologist",
+  description: "Portfolio showcasing branding, print, social media creatives, and digital design.",
   openGraph: {
-    title: "Sunaina — Next.js Developer & Creative Technologist",
-    description: "Portfolio showcasing full-stack applications, interactive 3D device stages, branding, and digital design.",
+    title: "Sunaina — Graphic Designer & Creative Technologist",
+    description: "Portfolio showcasing branding, print, social media creatives, and digital design.",
     url: "/",
     siteName: "Sunaina Portfolio",
     images: [
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sunaina — Next.js Developer & Creative Technologist",
-    description: "Portfolio showcasing full-stack applications, interactive 3D device stages, branding, and digital design.",
+    title: "Sunaina — Graphic Designer & Creative Technologist",
+    description: "Portfolio showcasing branding, print, social media creatives, and digital design.",
     images: ["/api/og"],
   },
 };

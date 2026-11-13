@@ -1087,3 +1087,20 @@
     padding-left: 0;
   }
 }
+/* Portfolio filter bar: horizontal scroll without a visible scrollbar */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Hero work reel: slow infinite strip of real projects */
+@keyframes work-reel { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.work-reel { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.work-reel-track { animation: work-reel 80s linear infinite; }
+.work-reel:hover .work-reel-track, .work-reel:focus-within .work-reel-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .work-reel { overflow-x: auto; }
+  .work-reel-track { animation: none; }
+}
+
+/* Solid light buttons in the dark hero need dark text (overrides the hero-dark !important rule) */
+.hero-dark .cta-solid,
+.hero-dark .hero-cta.cta-solid { color: #0A0E17 !important; }

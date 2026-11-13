@@ -11,6 +11,8 @@ model Project {
   title       String
   category    String
   client      String
+  industry    String   @default("")
+  featured    Boolean  @default(false)
   year        String
   posterAsset String
   aspectRatio String

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Inter } from "next/font/google";
+import { EB_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
+const garamond = EB_Garamond({
   subsets: ["latin"],
-  weight: "400",
+  style: ["normal", "italic"],
   variable: "--font-display",
 });
-const inter = Inter({
+const jost = Jost({
   subsets: ["latin"],
   variable: "--font-body",
 });
@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${instrumentSerif.variable} ${inter.variable}`}
+        className={`${garamond.variable} ${jost.variable}`}
       >
         {children}
       </body>

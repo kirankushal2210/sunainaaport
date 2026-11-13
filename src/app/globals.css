@@ -5,16 +5,24 @@
    ======================================== */
 
 @theme {
-  --font-display: "Instrument Serif", serif;
-  --font-body: "Inter", sans-serif;
+  --font-display: "EB Garamond", serif;
+  --font-body: "Jost", sans-serif;
 
-  --color-paper: #f2ede4;
-  --color-paper-dark: #e8e0d4;
-  --color-ink: #1a1a1a;
-  --color-ink-light: #4a4a4a;
-  --color-ink-faint: #8a8a8a;
-  --color-cyan: #00e5ff;
-  --color-magenta: #ff0080;
+  /* Warm "cocoa & crimson" palette */
+  --color-paper: #EAE5DC;
+  --color-paper-dark: #E3DACC;
+  --color-ink: #2A1510;
+  --color-ink-light: #5A3F37;
+  --color-ink-faint: #9A8077;
+  --color-cocoa: #2A1510;
+  --color-cocoa-deep: #1F0E0A;
+  --color-crimson: #B4232F;
+  --color-blush: #E9A38F;
+  --color-mint: #7DD3A8;
+  --color-teal: #23505A;
+  --color-teal-deep: #1B4249;
+  --color-cyan: #E9A38F;
+  --color-magenta: #B4232F;
 }
 
 /* No monospace on this site: Tailwind's font-mono utility uses the body sans.
@@ -81,7 +89,7 @@
 
 
   *:focus-visible {
-    outline: 2px solid #c8956c;
+    outline: 2px solid #B4232F;
     outline-offset: 2px;
   }
 }
@@ -119,7 +127,7 @@
   width: 80px;
   height: 80px;
   background: transparent;
-  border: 2px solid #c8956c;
+  border: 2px solid #B4232F;
   mix-blend-mode: normal;
   border-radius: 50%;
   display: flex;
@@ -133,7 +141,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #c8956c;
+  color: #B4232F;
   font-size: 2rem;
   font-weight: 300;
 }
@@ -237,7 +245,7 @@
 
 /* ---- Creative Toolset Section ---- */
 .creative-toolset {
-  background: linear-gradient(135deg, #080c18 0%, #0c1224 40%, #0e1530 100%);
+  background: linear-gradient(135deg, #1F0E0A 0%, #2A1510 40%, #3A1D16 100%);
   position: relative;
   overflow: hidden;
   padding: clamp(5rem, 12vh, 10rem) clamp(2rem, 6vw, 7rem);
@@ -252,7 +260,7 @@
   inset: 0;
   background: radial-gradient(ellipse 80% 60% at 50% 40%,
       transparent 0%,
-      rgba(8, 12, 24, 0.6) 100%);
+      rgba(31, 14, 10, 0.6) 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -314,7 +322,7 @@
   font-size: clamp(2.5rem, 5.5vw, 5rem);
   font-weight: 400;
   letter-spacing: 0.15em;
-  color: #e8ddd0;
+  color: #F3EADF;
   text-transform: uppercase;
   margin-bottom: 3rem;
   position: relative;
@@ -326,7 +334,7 @@
   display: block;
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, #c8956c, transparent);
+  background: linear-gradient(90deg, #B4232F, transparent);
   margin-top: 1.5rem;
 }
 
@@ -413,7 +421,7 @@
 }
 
 .toolset-core-item:hover {
-  background: rgba(200, 149, 108, 0.05);
+  background: rgba(180, 35, 47, 0.05);
   transform: translateX(-8px);
 }
 
@@ -423,7 +431,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #c8956c;
+  color: #B4232F;
   white-space: nowrap;
   min-width: 60px;
   padding-top: 0.3rem;
@@ -443,10 +451,10 @@
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(200, 149, 108, 0.2);
+  border: 1px solid rgba(180, 35, 47, 0.2);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
-    0 2px 8px rgba(200, 149, 108, 0.08),
+    0 2px 8px rgba(180, 35, 47, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -477,9 +485,9 @@
   border-radius: 20px;
   padding: 1px;
   background: linear-gradient(135deg,
-      rgba(200, 149, 108, 0.5) 0%,
+      rgba(180, 35, 47, 0.5) 0%,
       rgba(212, 168, 67, 0.3) 50%,
-      rgba(200, 149, 108, 0.2) 100%);
+      rgba(180, 35, 47, 0.2) 100%);
   mask: linear-gradient(#fff, #fff) content-box, linear-gradient(#fff, #fff);
   mask-composite: exclude;
   -webkit-mask-composite: xor;
@@ -488,9 +496,9 @@
 
 /* Glow on hover */
 .toolset-core-item:hover .toolset-icon-container {
-  border-color: rgba(200, 149, 108, 0.4);
+  border-color: rgba(180, 35, 47, 0.4);
   box-shadow:
-    0 12px 48px rgba(200, 149, 108, 0.15),
+    0 12px 48px rgba(180, 35, 47, 0.15),
     0 4px 16px rgba(212, 168, 67, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     inset 0 -1px 0 rgba(0, 0, 0, 0.15);
@@ -528,7 +536,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.1rem, 1.8vw, 1.5rem);
   font-weight: 400;
-  color: #e8ddd0;
+  color: #F3EADF;
   letter-spacing: 0.04em;
   line-height: 1.2;
 }
@@ -538,7 +546,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(200, 149, 108, 0.6);
+  color: rgba(180, 35, 47, 0.6);
   line-height: 1.4;
 }
 
@@ -547,9 +555,9 @@
   align-self: end;
   max-width: 420px;
   padding: 2rem;
-  border: 1px solid rgba(200, 149, 108, 0.15);
+  border: 1px solid rgba(180, 35, 47, 0.15);
   border-radius: 12px;
-  background: rgba(200, 149, 108, 0.03);
+  background: rgba(180, 35, 47, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   position: relative;
@@ -561,7 +569,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #c8956c;
+  color: #B4232F;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -573,7 +581,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #c8956c;
+  background: #B4232F;
   display: inline-block;
   animation: panelDotPulse 2s ease-in-out infinite;
 }
@@ -583,12 +591,12 @@
   0%,
   100% {
     opacity: 1;
-    box-shadow: 0 0 4px rgba(200, 149, 108, 0.5);
+    box-shadow: 0 0 4px rgba(180, 35, 47, 0.5);
   }
 
   50% {
     opacity: 0.5;
-    box-shadow: 0 0 8px rgba(200, 149, 108, 0.8);
+    box-shadow: 0 0 8px rgba(180, 35, 47, 0.8);
   }
 }
 
@@ -596,12 +604,12 @@
   font-family: var(--font-body);
   font-size: 0.72rem;
   line-height: 1.7;
-  color: rgba(232, 221, 208, 0.5);
+  color: rgba(243, 234, 223, 0.5);
   letter-spacing: 0.02em;
 }
 
 .toolset-panel-text em {
-  color: rgba(200, 149, 108, 0.7);
+  color: rgba(180, 35, 47, 0.7);
   font-style: italic;
 }
 
@@ -611,7 +619,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(200, 149, 108, 0.5);
+  color: rgba(180, 35, 47, 0.5);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -619,7 +627,7 @@
 
 .toolset-panel-confirm::before {
   content: "✓";
-  color: #c8956c;
+  color: #B4232F;
   font-size: 0.7rem;
 }
 
@@ -659,8 +667,8 @@
 }
 
 .projects-section-morph.is-dark {
-  background-color: #0A0E17;
-  color: #F4F1EA;
+  background-color: #2A1510;
+  color: #F1EBE1;
 }
 
 .projects-section-morph .display-large {
@@ -668,12 +676,12 @@
 }
 
 .projects-section-morph.is-dark .display-large {
-  color: #F4F1EA;
+  color: #F1EBE1;
 }
 
 /* Base styles for the project row items */
 .project-item-morph {
-  border-bottom: 1px solid rgba(28, 28, 28, 0.1);
+  border-bottom: 1px solid rgba(42, 21, 16, 0.1);
   padding: 3rem 0;
   transition: border-color 0.6s ease, color 0.4s ease;
   cursor: none;
@@ -681,11 +689,11 @@
 }
 
 .project-item-morph:first-child {
-  border-top: 1px solid rgba(28, 28, 28, 0.1);
+  border-top: 1px solid rgba(42, 21, 16, 0.1);
 }
 
 .project-item-morph:hover {
-  color: #c8956c;
+  color: #B4232F;
 }
 
 .project-item-morph .project-number {
@@ -710,16 +718,16 @@
 /* Dark state for the rows */
 .projects-section-morph.is-dark .project-item-morph {
   border-color: rgba(255, 255, 255, 0.08);
-  color: #F4F1EA;
+  color: #F1EBE1;
 }
 
 .projects-section-morph.is-dark .project-item-morph:hover {
-  color: #c8956c;
+  color: #B4232F;
 }
 
 .projects-section-morph.is-dark .project-item-morph .project-number,
 .projects-section-morph.is-dark .project-item-morph .project-category {
-  color: rgba(244, 241, 234, 0.4);
+  color: rgba(241, 235, 225, 0.4);
 }
 
 /* ---- Marquee / Ticker ---- */
@@ -813,30 +821,30 @@
 
 /* ---- Hero Dark Mode Override ---- */
 .hero-dark {
-  background-color: #0A0E17;
-  color: #e8ddd0;
+  background-color: #2A1510;
+  color: #F3EADF;
 }
 
 .hero-dark .hero-name-line,
 .hero-dark .hero-role,
 .hero-dark .nav-link,
 .hero-dark .hero-cta {
-  color: #e8ddd0 !important;
+  color: #F3EADF !important;
 }
 
 /* Ensure bio text words are light and visible above the video */
 .hero-dark .hero-bio-word {
-  color: #e8ddd0 !important;
+  color: #F3EADF !important;
   position: relative;
   z-index: 20;
 }
 
 .hero-dark .fragment-text {
-  color: rgba(232, 221, 208, 0.1) !important;
+  color: rgba(243, 234, 223, 0.1) !important;
 }
 
 .hero-dark .text-\[var\(--color-magenta\)\] {
-  color: #c8956c !important;
+  color: #B4232F !important;
   /* copper instead of magenta */
 }
 
@@ -867,11 +875,11 @@
 
 /* ---- About / Showcase Video Section ---- */
 .about-showcase-section {
-  background: linear-gradient(135deg, #080c18 0%, #0c1224 40%, #0e1530 100%);
+  background: linear-gradient(135deg, #1F0E0A 0%, #2A1510 40%, #3A1D16 100%);
   position: relative;
   overflow: hidden;
   padding: clamp(6rem, 15vh, 12rem) clamp(2rem, 6vw, 7rem);
-  color: #e8ddd0;
+  color: #F3EADF;
   /* Extra height to allow scrolling for the video scrub effect */
   min-height: 150vh;
 }
@@ -926,7 +934,7 @@
   font-size: clamp(3rem, 6vw, 6rem);
   line-height: 0.9;
   letter-spacing: 0.05em;
-  color: #c8956c;
+  color: #B4232F;
   text-transform: uppercase;
 }
 
@@ -934,7 +942,7 @@
   font-family: var(--font-body);
   font-size: clamp(1rem, 1.2vw, 1.15rem);
   line-height: 1.8;
-  color: rgba(232, 221, 208, 0.8);
+  color: rgba(243, 234, 223, 0.8);
   max-width: 45ch;
 }
 
@@ -942,7 +950,7 @@
 .cv-dossier-card {
   position: relative;
   display: block;
-  border: 1px solid rgba(28, 28, 28, 0.2);
+  border: 1px solid rgba(42, 21, 16, 0.2);
   /* var(--color-ink) with opacity */
   background: transparent;
   overflow: hidden;
@@ -954,7 +962,7 @@
 .cv-dossier-bg {
   position: absolute;
   inset: 0;
-  background-color: #0A0E17;
+  background-color: #2A1510;
   /* Very dark navy/black */
   transform: scaleY(0);
   transform-origin: bottom;
@@ -969,12 +977,12 @@
 }
 
 .cv-dossier-meta {
-  color: rgba(28, 28, 28, 0.6);
+  color: rgba(42, 21, 16, 0.6);
   transition: color 0.5s ease;
 }
 
 .cv-dossier-card:hover .cv-dossier-meta {
-  color: #c8956c;
+  color: #B4232F;
   /* Copper */
 }
 
@@ -989,7 +997,7 @@
 }
 
 .cv-dossier-card:hover .cv-dossier-title {
-  color: #e8ddd0;
+  color: #F3EADF;
   /* Paper color */
 }
 
@@ -999,7 +1007,7 @@
 }
 
 .cv-dossier-card:hover .cv-dossier-cta {
-  color: #c8956c;
+  color: #B4232F;
 }
 
 /* ---- Responsive ---- */
@@ -1110,4 +1118,15 @@
 
 /* Solid light buttons in the dark hero need dark text (overrides the hero-dark !important rule) */
 .hero-dark .cta-solid,
-.hero-dark .hero-cta.cta-solid { color: #0A0E17 !important; }
+.hero-dark .hero-cta.cta-solid { color: #2A1510 !important; }
+
+/* Rotating circular badge */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 22s linear infinite; transform-origin: 50% 50%; }
+
+/* Client name rows: two marquees drifting in opposite directions */
+.client-track { animation: work-reel 60s linear infinite; }
+.client-track-reverse { animation-direction: reverse; }
+@media (prefers-reduced-motion: reduce) {
+  .spin-slow, .client-track { animation: none; }
+}

@@ -6,7 +6,7 @@
 
 @theme {
   --font-display: "Instrument Serif", serif;
-  --font-body: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
 
   --color-paper: #f2ede4;
   --color-paper-dark: #e8e0d4;
@@ -15,6 +15,13 @@
   --color-ink-faint: #8a8a8a;
   --color-cyan: #00e5ff;
   --color-magenta: #ff0080;
+}
+
+/* No monospace on this site: Tailwind's font-mono utility uses the body sans.
+   "inline" makes the utility reference var(--font-body) where it's used, so it
+   picks up the next/font Inter family set on <body>. */
+@theme inline {
+  --font-mono: var(--font-body);
 }
 
 /* ---- Base ---- */
@@ -152,7 +159,7 @@
   transform: translate(-50%, -50%);
   color: white;
   font-size: 0.65rem;
-  font-family: monospace;
+  font-family: var(--font-body);
   letter-spacing: 0.1em;
   font-weight: 600;
   text-align: center;

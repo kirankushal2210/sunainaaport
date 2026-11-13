@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, createRef } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Command } from "cmdk";
@@ -38,196 +38,6 @@ interface Experience {
 }
 
 /* ───────────── Creative Toolset Core Icons ───────────── */
-const TOOLSET_CORES = [
-  {
-    id: "photoshop",
-    number: "Core 01",
-    title: "Digital Manipulation",
-    subtitle: "RETROFIT, LENS",
-    icon: (
-      <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="psFrame" x1="0" y1="0" x2="56" y2="56">
-            <stop offset="0%" stopColor="#B4232F" />
-            <stop offset="50%" stopColor="#a0724f" />
-            <stop offset="100%" stopColor="#d4a843" />
-          </linearGradient>
-          <linearGradient id="psCore" x1="10" y1="10" x2="46" y2="46">
-            <stop offset="0%" stopColor="#1a2744" />
-            <stop offset="100%" stopColor="#0d1a33" />
-          </linearGradient>
-          <linearGradient id="psGlass" x1="14" y1="8" x2="42" y2="48">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.15)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-        </defs>
-        {/* Copper outer frame */}
-        <rect x="2" y="2" width="52" height="52" rx="10" fill="url(#psFrame)" opacity="0.3" />
-        <rect x="4" y="4" width="48" height="48" rx="8" fill="url(#psCore)" />
-        {/* Glass highlight */}
-        <rect x="4" y="4" width="48" height="24" rx="8" fill="url(#psGlass)" />
-        {/* Inner copper border */}
-        <rect x="6" y="6" width="44" height="44" rx="6" fill="none" stroke="#B4232F" strokeWidth="0.5" opacity="0.4" />
-        {/* Ps text */}
-        <text x="10" y="39" fontFamily="serif" fontSize="26" fontWeight="600" fill="#5cc8e8" opacity="0.9">Ps</text>
-        {/* Copper accent corner */}
-        <circle cx="44" cy="12" r="2" fill="#B4232F" opacity="0.3" />
-      </svg>
-    ),
-  },
-  {
-    id: "illustrator",
-    number: "Core 02",
-    title: "Vector & Illustration",
-    subtitle: "PRECISE PATHS",
-    icon: (
-      <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="aiFrame" x1="0" y1="0" x2="56" y2="56">
-            <stop offset="0%" stopColor="#d4a843" />
-            <stop offset="50%" stopColor="#B4232F" />
-            <stop offset="100%" stopColor="#B4232F" />
-          </linearGradient>
-          <linearGradient id="aiCore" x1="10" y1="10" x2="46" y2="46">
-            <stop offset="0%" stopColor="#3d1e00" />
-            <stop offset="100%" stopColor="#2a1500" />
-          </linearGradient>
-          <linearGradient id="aiGlass" x1="14" y1="8" x2="42" y2="48">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.12)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-        </defs>
-        <rect x="2" y="2" width="52" height="52" rx="10" fill="url(#aiFrame)" opacity="0.3" />
-        <rect x="4" y="4" width="48" height="48" rx="8" fill="url(#aiCore)" />
-        <rect x="4" y="4" width="48" height="24" rx="8" fill="url(#aiGlass)" />
-        <rect x="6" y="6" width="44" height="44" rx="6" fill="none" stroke="#d4a843" strokeWidth="0.5" opacity="0.4" />
-        <text x="14" y="39" fontFamily="serif" fontSize="26" fontWeight="600" fill="#ff9a2e" opacity="0.9">Ai</text>
-        <circle cx="44" cy="12" r="2" fill="#d4a843" opacity="0.3" />
-      </svg>
-    ),
-  },
-  {
-    id: "brand",
-    number: "Core 03",
-    title: "Identity Development",
-    subtitle: "UNIFYING VISION",
-    icon: (
-      <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="brassBlock" x1="0" y1="0" x2="56" y2="56">
-            <stop offset="0%" stopColor="#d4a843" />
-            <stop offset="30%" stopColor="#B4232F" />
-            <stop offset="70%" stopColor="#a07850" />
-            <stop offset="100%" stopColor="#d4a843" />
-          </linearGradient>
-          <linearGradient id="brassTop" x1="8" y1="4" x2="48" y2="8">
-            <stop offset="0%" stopColor="#e8c88a" />
-            <stop offset="100%" stopColor="#B4232F" />
-          </linearGradient>
-        </defs>
-        {/* Letterpress block body */}
-        <rect x="8" y="10" width="40" height="40" rx="3" fill="url(#brassBlock)" />
-        {/* Top bevel */}
-        <rect x="8" y="8" width="40" height="6" rx="2" fill="url(#brassTop)" opacity="0.6" />
-        {/* Letter A (raised type) */}
-        <text x="14" y="42" fontFamily="serif" fontSize="32" fontWeight="700" fill="#1a1208" opacity="0.85">A</text>
-        {/* Clockwork gears */}
-        <circle cx="40" cy="38" r="5" fill="none" stroke="#8b6c3f" strokeWidth="1" opacity="0.5" />
-        <circle cx="40" cy="38" r="2" fill="#8b6c3f" opacity="0.4" />
-        <circle cx="36" cy="43" r="3" fill="none" stroke="#a07850" strokeWidth="0.8" opacity="0.4" />
-        <circle cx="36" cy="43" r="1.2" fill="#a07850" opacity="0.3" />
-        {/* Gear teeth hints */}
-        <line x1="40" y1="33" x2="40" y2="34.5" stroke="#8b6c3f" strokeWidth="0.8" opacity="0.4" />
-        <line x1="45" y1="38" x2="43.5" y2="38" stroke="#8b6c3f" strokeWidth="0.8" opacity="0.4" />
-        <line x1="40" y1="43" x2="40" y2="41.5" stroke="#8b6c3f" strokeWidth="0.8" opacity="0.4" />
-        <line x1="35" y1="38" x2="36.5" y2="38" stroke="#8b6c3f" strokeWidth="0.8" opacity="0.4" />
-        {/* Copper patina highlight */}
-        <rect x="10" y="12" width="18" height="2" rx="1" fill="rgba(255,255,255,0.15)" />
-      </svg>
-    ),
-  },
-  {
-    id: "social",
-    number: "Core 04",
-    title: "Social Content",
-    subtitle: "DIGITAL ENGAGEMENT",
-    icon: (
-      <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="bubbleGlass" x1="6" y1="6" x2="44" y2="44">
-            <stop offset="0%" stopColor="rgba(200,220,255,0.2)" />
-            <stop offset="50%" stopColor="rgba(180,200,240,0.08)" />
-            <stop offset="100%" stopColor="rgba(160,180,220,0.15)" />
-          </linearGradient>
-          <linearGradient id="copperHeart" x1="20" y1="18" x2="36" y2="38">
-            <stop offset="0%" stopColor="#d4a843" />
-            <stop offset="50%" stopColor="#B4232F" />
-            <stop offset="100%" stopColor="#a07850" />
-          </linearGradient>
-        </defs>
-        {/* Glass chat bubble */}
-        <path d="M8 12 C8 8, 12 4, 18 4 L38 4 C44 4, 48 8, 48 12 L48 30 C48 34, 44 38, 38 38 L22 38 L14 46 L14 38 L18 38 C12 38, 8 34, 8 30 Z" fill="url(#bubbleGlass)" stroke="rgba(200,220,255,0.3)" strokeWidth="1" />
-        {/* Glass highlight */}
-        <path d="M10 12 C10 9, 13 6, 18 6 L38 6 C43 6, 46 9, 46 12 L46 18 C30 22, 14 18, 10 16 Z" fill="rgba(255,255,255,0.08)" />
-        {/* Copper heart */}
-        <path d="M28 34 C24 30, 18 26, 18 22 C18 18, 22 16, 25 18 C26.5 19.5, 27.5 20.5, 28 22 C28.5 20.5, 29.5 19.5, 31 18 C34 16, 38 18, 38 22 C38 26, 32 30, 28 34 Z" fill="url(#copperHeart)" opacity="0.85" />
-        {/* Gold notification dot */}
-        <circle cx="46" cy="8" r="5" fill="#d4a843" />
-        <circle cx="46" cy="8" r="3.5" fill="#e8c060" />
-        <circle cx="45" cy="7" r="1" fill="rgba(255,255,255,0.4)" />
-      </svg>
-    ),
-  },
-  {
-    id: "print",
-    number: "Core 05",
-    title: "Print & Layout",
-    subtitle: "CROP & BLEED",
-    icon: (
-      <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="paperEdge" x1="8" y1="8" x2="48" y2="48">
-            <stop offset="0%" stopColor="#f5f0e6" />
-            <stop offset="100%" stopColor="#e8e0d0" />
-          </linearGradient>
-        </defs>
-        {/* Stacked paper sheets */}
-        <rect x="14" y="14" width="34" height="38" rx="1" fill="#ddd5c5" opacity="0.4" />
-        <rect x="11" y="11" width="34" height="38" rx="1" fill="#e2dace" opacity="0.6" />
-        <rect x="8" y="8" width="34" height="38" rx="1" fill="url(#paperEdge)" />
-        {/* Shadow edge */}
-        <line x1="8" y1="46" x2="42" y2="46" stroke="rgba(0,0,0,0.1)" strokeWidth="0.5" />
-        {/* CMYK targets — actual circles */}
-        <circle cx="14" cy="14" r="2.5" fill="none" stroke="#00bcd4" strokeWidth="0.8" />
-        <circle cx="14" cy="14" r="1" fill="#00bcd4" />
-        <circle cx="20" cy="14" r="2.5" fill="none" stroke="#e91e63" strokeWidth="0.8" />
-        <circle cx="20" cy="14" r="1" fill="#e91e63" />
-        <circle cx="26" cy="14" r="2.5" fill="none" stroke="#ffc107" strokeWidth="0.8" />
-        <circle cx="26" cy="14" r="1" fill="#ffc107" />
-        <circle cx="32" cy="14" r="2.5" fill="none" stroke="#212121" strokeWidth="0.8" />
-        <circle cx="32" cy="14" r="1" fill="#212121" />
-        {/* Color bars — actual small squares */}
-        <rect x="12" y="38" width="4" height="3" fill="#00bcd4" rx="0.3" />
-        <rect x="17" y="38" width="4" height="3" fill="#e91e63" rx="0.3" />
-        <rect x="22" y="38" width="4" height="3" fill="#ffc107" rx="0.3" />
-        <rect x="27" y="38" width="4" height="3" fill="#212121" rx="0.3" />
-        <rect x="32" y="38" width="4" height="3" fill="#8bc34a" rx="0.3" />
-        {/* Crop marks */}
-        <line x1="6" y1="8" x2="6" y2="13" stroke="#333" strokeWidth="0.4" />
-        <line x1="6" y1="8" x2="8" y2="8" stroke="#333" strokeWidth="0.4" />
-        <line x1="44" y1="8" x2="44" y2="13" stroke="#333" strokeWidth="0.4" />
-        <line x1="42" y1="8" x2="44" y2="8" stroke="#333" strokeWidth="0.4" />
-        <line x1="6" y1="46" x2="8" y2="46" stroke="#333" strokeWidth="0.4" />
-        <line x1="6" y1="41" x2="6" y2="46" stroke="#333" strokeWidth="0.4" />
-        {/* Content lines */}
-        <rect x="12" y="20" width="22" height="1.5" rx="0.5" fill="rgba(0,0,0,0.12)" />
-        <rect x="12" y="24" width="18" height="1.5" rx="0.5" fill="rgba(0,0,0,0.08)" />
-        <rect x="12" y="28" width="24" height="1.5" rx="0.5" fill="rgba(0,0,0,0.06)" />
-        <rect x="12" y="32" width="16" height="1.5" rx="0.5" fill="rgba(0,0,0,0.08)" />
-      </svg>
-    ),
-  },
-];
 
 /* ───────────── Portfolio helpers ───────────── */
 
@@ -299,12 +109,110 @@ const PROCESS = [
 
 const isVideoAsset = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
 
-function ProjectMedia({ src, alt, className }: { src: string; alt: string; className?: string }) {
+/** Small (800px) version generated for every image in /public/projects — used for grids and cards */
+const thumbOf = (src: string) =>
+  src.startsWith("/projects/") && /\.(jpe?g|png)$/i.test(src)
+    ? src.replace("/projects/", "/projects/thumbs/").replace(/\.(png|jpeg)$/i, ".jpg")
+    : null;
+
+function ProjectMedia({ src, alt, className, sizes, full }: { src: string; alt: string; className?: string; sizes?: string; full?: boolean }) {
   if (!src) return null;
   if (isVideoAsset(src)) {
     return <video src={src} aria-label={alt} className={className} autoPlay muted loop playsInline preload="metadata" />;
   }
-  return <img src={src} alt={alt} className={className} loading="lazy" decoding="async" />;
+  const thumb = full ? null : thumbOf(src);
+  return (
+    <img
+      src={thumb || src}
+      srcSet={thumb ? `${thumb} 800w, ${src} 2000w` : undefined}
+      sizes={thumb ? sizes || "(min-width: 1536px) 25vw, (min-width: 1024px) 33vw, (min-width: 480px) 50vw, 100vw" : undefined}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+/* ───────────── Self-contained slideshows (own timers, so the page doesn't re-render) ───────────── */
+
+/** Cycles an index every `ms` while the element is on screen and the tab is visible */
+function useCycle(length: number, ms: number) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (length < 2 || !ref.current) return;
+    let visible = false;
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
+    io.observe(ref.current);
+    const id = window.setInterval(() => {
+      if (visible && document.visibilityState === "visible") setIndex((i) => (i + 1) % length);
+    }, ms);
+    return () => { io.disconnect(); window.clearInterval(id); };
+  }, [length, ms]);
+  return { ref, index };
+}
+
+function IntroShowcase({ items, onOpen }: { items: Project[]; onOpen: (p: Project) => void }) {
+  const { ref, index } = useCycle(items.length, 3600);
+  const p = items[index];
+  return (
+    <div ref={ref} className="absolute inset-0">
+      <AnimatePresence mode="sync">
+        {p && (
+          <motion.button
+            type="button"
+            key={p.id}
+            onClick={() => onOpen(p)}
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 cursor-none will-change-[opacity,transform]"
+            aria-label={`View project: ${p.title}`}
+          >
+            <ProjectMedia src={p.posterAsset} alt={p.title} sizes="(min-width: 768px) 45vw, 100vw" className="w-full h-full object-cover" />
+            <span className="absolute left-5 bottom-5 md:left-8 md:bottom-8 text-left text-[#F3EADF] drop-shadow">
+              <span className="block text-[11px] uppercase tracking-[0.25em] opacity-80">{p.client}</span>
+              <span className="block font-display text-xl md:text-2xl">{p.title.split(" - ")[1] || p.title}</span>
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function PhoneFeed({ items, onOpen }: { items: Project[]; onOpen: (p: Project) => void }) {
+  const { ref, index } = useCycle(items.length, 3200);
+  const p = items[index];
+  if (!p) return null;
+  return (
+    <div ref={ref} className="intro-phone mt-12">
+      <button
+        type="button"
+        onClick={() => onOpen(p)}
+        className="relative block w-[190px] md:w-[220px] aspect-[9/19] rounded-[2.2rem] bg-[#111] p-[7px] shadow-[0_30px_60px_rgba(42,21,16,0.35)] cursor-none"
+        aria-label="View this social media project"
+      >
+        <span className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-4 rounded-full bg-black z-10" />
+        <span className="block relative w-full h-full rounded-[1.8rem] overflow-hidden bg-ink">
+          <AnimatePresence mode="sync">
+            <motion.img
+              key={p.id}
+              src={thumbOf(p.posterAsset) || p.posterAsset}
+              alt={p.title}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </AnimatePresence>
+        </span>
+      </button>
+    </div>
+  );
 }
 
 /* ───────────── Fallback Data ───────────── */
@@ -472,252 +380,93 @@ export default function PortfolioClient({
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prevOverflow; };
   }, [selectedProject]);
 
-  /* ── Creative Toolset Physics State ── */
-  const toolsetContainerRef = useRef<HTMLElement>(null);
-  const numCores = TOOLSET_CORES.length; // 5
-  const coresPhysics = useRef(
-    Array.from({ length: numCores }).map(() => ({
-      anchorX: 0,
-      anchorY: 0,
-      x: 0,
-      y: 0,
-      vx: 0,
-      vy: 0,
-      phaseX: Math.random() * Math.PI * 2,
-      phaseY: Math.random() * Math.PI * 2,
-      ref: createRef<HTMLDivElement>()
-    }))
-  );
-  const svgPathsRef = useRef<(SVGPathElement | null)[]>([]);
-
+  /* ── Custom cursor: only on devices with a real mouse; updates only when the mouse moves ── */
   useEffect(() => {
-    const updateAnchors = () => {
-      const container = toolsetContainerRef.current;
-      if (!container) return;
-      const { width, height } = container.getBoundingClientRect();
-      const isMobile = width < 768;
-
-      const anchors = isMobile ? [
-        { px: 0.5, py: 0.15 },
-        { px: 0.5, py: 0.35 },
-        { px: 0.5, py: 0.55 },
-        { px: 0.5, py: 0.75 },
-        { px: 0.5, py: 0.95 },
-      ] : [
-        { px: 0.2, py: 0.25 },
-        { px: 0.8, py: 0.35 },
-        { px: 0.35, py: 0.65 },
-        { px: 0.7, py: 0.8 },
-        { px: 0.5, py: 0.45 },
-      ];
-
-      coresPhysics.current.forEach((core, i) => {
-        core.anchorX = width * anchors[i].px;
-        core.anchorY = height * anchors[i].py;
-        if (core.x === 0 && core.y === 0) {
-          core.x = core.anchorX;
-          core.y = core.anchorY;
-        }
-      });
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    let frame = 0;
+    let x = 0, y = 0;
+    const paint = () => {
+      frame = 0;
+      if (cursorRef.current) cursorRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
     };
-    updateAnchors();
-    window.addEventListener('resize', updateAnchors);
-    return () => window.removeEventListener('resize', updateAnchors);
-  }, []);
-
-  /* ── Smooth cursor tracking ── */
-  const mousePos = useRef({ x: 0, y: 0 });
-  const rafId = useRef<number>(0);
-
-  const animateFollower = useCallback(() => {
-    if (cursorRef.current) {
-      cursorRef.current.style.transform = `translate(${mousePos.current.x}px, ${mousePos.current.y}px) translate(-50%, -50%)`;
-    }
-
-    // --- Toolset Physics ---
-    const time = Date.now() * 0.001;
-    let toolsetMx = -9999;
-    let toolsetMy = -9999;
-    if (toolsetContainerRef.current) {
-      const rect = toolsetContainerRef.current.getBoundingClientRect();
-      toolsetMx = mousePos.current.x - rect.left;
-      toolsetMy = mousePos.current.y - rect.top;
-    }
-
-    const tension = 0.04;
-    const friction = 0.85;
-    const repulsionRadius = 300;
-    const repulsionForce = 1200;
-
-    coresPhysics.current.forEach((core) => {
-      // Ambient Drift
-      const driftX = Math.sin(time + core.phaseX) * 15;
-      const driftY = Math.cos(time + core.phaseY) * 15;
-
-      const targetX = core.anchorX + driftX;
-      const targetY = core.anchorY + driftY;
-
-      let repX = 0;
-      let repY = 0;
-      let rotateX = 0;
-      let rotateY = 0;
-
-      const dx = toolsetMx - core.x;
-      const dy = toolsetMy - core.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      // Cursor Repulsion
-      if (dist < repulsionRadius) {
-        const force = (repulsionRadius - dist) / repulsionRadius;
-        repX = -(dx / dist) * force * repulsionForce * 0.1;
-        repY = -(dy / dist) * force * repulsionForce * 0.1;
-
-        rotateY = gsap.utils.clamp(-35, 35, (dx / dist) * force * -45);
-        rotateX = gsap.utils.clamp(-35, 35, (dy / dist) * force * 45);
-      }
-
-      // Spring physics
-      core.vx += (targetX + repX - core.x) * tension;
-      core.vy += (targetY + repY - core.y) * tension;
-
-      core.vx *= friction;
-      core.vy *= friction;
-
-      core.x += core.vx;
-      core.y += core.vy;
-
-      if (core.ref.current) {
-        core.ref.current.style.transform = `translate3d(${core.x}px, ${core.y}px, 0) translate(-50%, -50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-      }
-    });
-
-    // Dynamic SVG Beziers
-    if (svgPathsRef.current.length > 0) {
-      for (let i = 0; i < numCores - 1; i++) {
-        const c1 = coresPhysics.current[i];
-        const c2 = coresPhysics.current[i + 1];
-        if (svgPathsRef.current[i]) {
-          const cx1 = c1.x + (c2.x - c1.x) * 0.5;
-          const cy1 = c1.y;
-          const cx2 = c1.x + (c2.x - c1.x) * 0.5;
-          const cy2 = c2.y;
-          svgPathsRef.current[i]!.setAttribute('d', `M${c1.x},${c1.y} C${cx1},${cy1} ${cx2},${cy2} ${c2.x},${c2.y}`);
-        }
-      }
-      // Loop back to first
-      const first = coresPhysics.current[0];
-      const last = coresPhysics.current[numCores - 1];
-      if (svgPathsRef.current[numCores - 1]) {
-        const cx1 = last.x + (first.x - last.x) * 0.5;
-        const cy1 = last.y;
-        const cx2 = last.x + (first.x - last.x) * 0.5;
-        const cy2 = first.y;
-        svgPathsRef.current[numCores - 1]!.setAttribute('d', `M${last.x},${last.y} C${cx1},${cy1} ${cx2},${cy2} ${first.x},${first.y}`);
-      }
-    }
-
-    rafId.current = requestAnimationFrame(animateFollower);
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mousePos.current = { x: e.clientX, y: e.clientY };
+    const onMove = (e: MouseEvent) => {
+      x = e.clientX; y = e.clientY;
+      if (!frame) frame = requestAnimationFrame(paint);
     };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('input, textarea')) {
-        if (cursorRef.current) cursorRef.current.classList.add('hidden-cursor');
-      } else if (target.closest('a, button, select, [role="button"]')) {
-        if (cursorRef.current) cursorRef.current.classList.add('expanded');
-      }
+    const onOver = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("input, textarea")) cursorRef.current?.classList.add("hidden-cursor");
+      else if (t.closest('a, button, select, [role="button"]')) cursorRef.current?.classList.add("expanded");
     };
-
-    const handleMouseOut = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('input, textarea')) {
-        if (cursorRef.current) cursorRef.current.classList.remove('hidden-cursor');
-      } else if (target.closest('a, button, select, [role="button"]')) {
-        if (cursorRef.current) cursorRef.current.classList.remove('expanded');
-      }
+    const onOut = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("input, textarea")) cursorRef.current?.classList.remove("hidden-cursor");
+      else if (t.closest('a, button, select, [role="button"]')) cursorRef.current?.classList.remove("expanded");
     };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("mouseout", handleMouseOut);
-    rafId.current = requestAnimationFrame(animateFollower);
-
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseover", onOver, { passive: true });
+    window.addEventListener("mouseout", onOut, { passive: true });
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseover", handleMouseOver);
-      window.removeEventListener("mouseout", handleMouseOut);
-      cancelAnimationFrame(rafId.current);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseover", onOver);
+      window.removeEventListener("mouseout", onOut);
+      cancelAnimationFrame(frame);
     };
-  }, [animateFollower]);
+  }, []);
 
 
   /* ── GSAP entrance animations ── */
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       gsap.from(".hero-line", { y: 40, opacity: 0, duration: 1.1, stagger: 0.15, ease: "power3.out", delay: 0.15 });
 
-      // Scroll-tied video playback
-      if (videoRef.current) {
-        const video = videoRef.current;
+      const intro = document.getElementById("intro");
 
-        // Attempt to play immediately on mount
-        video.play().catch((err) => console.log("Autoplay blocked:", err));
-
-        const createVideoTrigger = () => {
-          ScrollTrigger.create({
-            trigger: ".hero-video-container",
-            start: "top 80%",
-            end: "bottom 20%",
-            onEnter: () => video.play(),
-            onLeave: () => video.pause(),
-            onEnterBack: () => video.play(),
-            onLeaveBack: () => video.pause(),
-          });
-        };
-
-        if (video.readyState >= 2) {
-          createVideoTrigger();
-        } else {
-          video.onloadedmetadata = createVideoTrigger;
-        }
+      // Header turns crimson once the intro reaches it (one trigger, no per-frame scroll handler)
+      if (intro) {
+        ScrollTrigger.create({
+          trigger: intro,
+          start: "top 72px",
+          end: "max",
+          onToggle: (self) => setPastHero(self.isActive),
+        });
       }
 
-      // Hero → intro transition: the hero pins in place and the cream intro sheet slides up over it
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const intro = document.getElementById("intro");
-        if (!intro) return;
+      // Hero video: play while the hero is visible, pause once the intro has covered it
+      if (videoRef.current && intro) {
+        const video = videoRef.current;
+        video.play().catch(() => {});
         ScrollTrigger.create({
-          trigger: ".hero-stage",
-          start: "bottom bottom",
-          endTrigger: intro,
-          end: "top top",
-          pin: true,
-          pinSpacing: false,
+          trigger: intro,
+          start: "top top",
+          onEnter: () => video.pause(),
+          onLeaveBack: () => { video.play().catch(() => {}); },
         });
+      }
+
+      const mm = gsap.matchMedia();
+      // Cheap, compositor-only effect everywhere: hero darkens as the intro slides over it
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        if (!intro) return;
         gsap.to(".hero-dim", {
           opacity: 0.6,
           ease: "none",
           scrollTrigger: { trigger: intro, start: "top bottom", end: "top top", scrub: true },
         });
-        // Phone drifts up a little as the intro scrolls (parallax)
+      });
+      // Parallax + reveal only on larger screens, where there is GPU headroom
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        if (!intro) return;
         gsap.fromTo(".intro-phone", { y: 60 }, {
           y: -40,
           ease: "none",
           scrollTrigger: { trigger: intro, start: "top bottom", end: "bottom top", scrub: true },
         });
-        // About image parallax (desktop)
         gsap.fromTo(".about-parallax", { yPercent: -6 }, {
           yPercent: 6,
           ease: "none",
           scrollTrigger: { trigger: "#info", start: "top bottom", end: "bottom top", scrub: true },
         });
-        // Work section rises in
         if (worksRef.current) {
           gsap.from("#works > *", {
             y: 50,
@@ -777,34 +526,16 @@ export default function PortfolioClient({
   /* ── Page chrome & showcase state ── */
   const [menuOpen, setMenuOpen] = useState(false);
   const [pastHero, setPastHero] = useState(false);
-  const [introSlide, setIntroSlide] = useState(0);
-  const [phoneSlide, setPhoneSlide] = useState(0);
   const [activeService, setActiveService] = useState(0);
 
   const findByAsset = (asset: string) => projects.find((p) => p.posterAsset === asset);
-  const introProjects = INTRO_MOCKUPS.map(findByAsset).filter(Boolean) as Project[];
-  const phoneProjects = PHONE_POSTS.map(findByAsset).filter(Boolean) as Project[];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const introProjects = useMemo(() => INTRO_MOCKUPS.map(findByAsset).filter(Boolean) as Project[], [projects]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const phoneProjects = useMemo(() => PHONE_POSTS.map(findByAsset).filter(Boolean) as Project[], [projects]);
   const contactThumbs = featuredProjects.slice(0, 4);
   const serviceExample = (category: string) =>
     projects.find((p) => p.category === category && p.featured) || projects.find((p) => p.category === category);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setIntroSlide((i) => i + 1);
-      setPhoneSlide((i) => i + 1);
-    }, 3200);
-    return () => window.clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const intro = document.getElementById("intro");
-      setPastHero(!!intro && intro.getBoundingClientRect().top <= 72);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const navLinks = [
     { href: "#works", label: "Work" },
@@ -822,7 +553,7 @@ export default function PortfolioClient({
           HEADER — fixed; light over the hero, crimson over cream
           ════════════════════════════════════════════ */}
       <header
-        className={`fixed top-0 inset-x-0 z-[60] transition-colors duration-500 ${pastHero ? "bg-paper/85 backdrop-blur-md text-crimson" : "text-[#F3EADF]"}`}
+        className={`fixed top-0 inset-x-0 z-[60] transition-colors duration-500 ${pastHero ? "bg-paper/95 text-crimson shadow-[0_1px_0_rgba(42,21,16,0.08)]" : "text-[#F3EADF]"}`}
       >
         <div className="flex items-center justify-between px-5 md:px-10 h-16">
           <a href="#top" className="text-sm md:text-base font-semibold tracking-[0.35em] uppercase" aria-label="Sunaina — home">
@@ -888,12 +619,15 @@ export default function PortfolioClient({
       {/* ════════════════════════════════════════════
           1 — HERO (pins while the next section slides over it)
           ════════════════════════════════════════════ */}
-      <div id="top" className="hero-stage bg-[var(--color-cocoa-deep)]">
+      {/* Hero + intro share a wrapper so the hero can stay sticky (pure CSS) while the intro slides over it */}
+      <div className="relative">
+      <div id="top" className="hero-stage sticky top-0 z-0 bg-[var(--color-cocoa-deep)]">
         <section className="hero-section relative min-h-[100svh] flex flex-col items-center justify-center text-center overflow-hidden text-[#F3EADF] px-6">
           <div className="hero-video-container absolute inset-0">
             <video
               ref={videoRef}
-              src="/including_different_icons_also.mp4"
+              src="/hero.mp4"
+              poster="/hero-poster.jpg"
               className="w-full h-full object-cover object-[50%_20%]"
               muted
               playsInline
@@ -903,7 +637,7 @@ export default function PortfolioClient({
               aria-hidden="true"
             />
             {/* Warm cocoa grade so the footage reads as one moody, brown frame */}
-            <div className="absolute inset-0 bg-[#5A2A1C] mix-blend-multiply opacity-80" />
+            <div className="absolute inset-0 bg-[#40190F]/65" />
             <div className="absolute inset-0 bg-gradient-to-b from-[#1F0E0A]/50 via-[#1F0E0A]/20 to-[#1F0E0A]/85" />
           </div>
           <div className="hero-dim absolute inset-0 z-[40] bg-black opacity-0 pointer-events-none" aria-hidden="true" />
@@ -934,30 +668,7 @@ export default function PortfolioClient({
         <div className="grid grid-cols-1 md:grid-cols-[45%_1fr] min-h-[100svh]">
           {/* Left: rotating large mockups */}
           <div className="relative min-h-[60vh] md:min-h-full overflow-hidden bg-ink">
-            <AnimatePresence mode="sync">
-              {introProjects.length > 0 && (() => {
-                const p = introProjects[introSlide % introProjects.length];
-                return (
-                  <motion.button
-                    type="button"
-                    key={p.id}
-                    onClick={() => setSelectedProject(p)}
-                    initial={{ opacity: 0, scale: 1.06 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0 cursor-none"
-                    aria-label={`View project: ${p.title}`}
-                  >
-                    <img src={p.posterAsset} alt={p.title} className="w-full h-full object-cover" />
-                    <span className="absolute left-5 bottom-5 md:left-8 md:bottom-8 text-left text-[#F3EADF] drop-shadow">
-                      <span className="block text-[11px] uppercase tracking-[0.25em] opacity-80">{p.client}</span>
-                      <span className="block font-display text-xl md:text-2xl">{p.title.split(" - ")[1] || p.title}</span>
-                    </span>
-                  </motion.button>
-                );
-              })()}
-            </AnimatePresence>
+            <IntroShowcase items={introProjects} onOpen={setSelectedProject} />
             {/* Rotating badge */}
             <div className="absolute -right-12 bottom-24 md:bottom-16 w-28 h-28 md:w-32 md:h-32 text-crimson z-10 pointer-events-none hidden md:block" aria-hidden="true">
               <svg viewBox="0 0 120 120" className="w-full h-full spin-slow">
@@ -984,34 +695,13 @@ export default function PortfolioClient({
             </h2>
 
             {/* Phone mockup cycling through social posts */}
-            {phoneProjects.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setSelectedProject(phoneProjects[phoneSlide % phoneProjects.length])}
-                className="intro-phone mt-12 relative w-[190px] md:w-[220px] aspect-[9/19] rounded-[2.2rem] bg-[#111] p-[7px] shadow-[0_30px_60px_rgba(42,21,16,0.35)] cursor-none"
-                aria-label="View this social media project"
-              >
-                <span className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-4 rounded-full bg-black z-10" />
-                <span className="block relative w-full h-full rounded-[1.8rem] overflow-hidden bg-ink">
-                  <AnimatePresence mode="sync">
-                    <motion.img
-                      key={phoneSlide % phoneProjects.length}
-                      src={phoneProjects[phoneSlide % phoneProjects.length].posterAsset}
-                      alt={phoneProjects[phoneSlide % phoneProjects.length].title}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -30 }}
-                      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </AnimatePresence>
-                </span>
-              </button>
-            )}
+            <PhoneFeed items={phoneProjects} onOpen={setSelectedProject} />
             <p className="mt-6 text-[11px] uppercase tracking-[0.25em] text-crimson/70">Swipe-worthy social, made for your feed</p>
           </div>
         </div>
       </section>
+
+      </div>
 
       {/* ════════════════════════════════════════════
           3 — STATEMENT
@@ -1087,7 +777,7 @@ export default function PortfolioClient({
         </div>
 
         {/* Sticky filter bar */}
-        <div className="sticky top-0 z-30 -mx-4 sm:-mx-8 md:-mx-12 xl:-mx-16 px-4 sm:px-8 md:px-12 xl:px-16 py-4 mb-8 md:mb-12 bg-paper/90 backdrop-blur-md border-b border-ink/10">
+        <div className="sticky top-0 z-30 -mx-4 sm:-mx-8 md:-mx-12 xl:-mx-16 px-4 sm:px-8 md:px-12 xl:px-16 py-4 mb-8 md:mb-12 bg-paper border-b border-ink/10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
             <div className="flex gap-2 overflow-x-auto no-scrollbar -my-1 py-1" role="tablist" aria-label="Filter projects by category">
               {categories.map((category) => {
@@ -1395,7 +1085,7 @@ export default function PortfolioClient({
           CONTACT — full-bleed image with a mint card
           ════════════════════════════════════════════ */}
       <section id="contact" className="relative overflow-hidden">
-        <img src="/projects/light-lens-monogram.jpg" alt="" className="absolute inset-0 w-full h-full object-cover scale-110 blur-[6px]" />
+        <img src="/projects/thumbs/contact-bg.jpg" alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-[#1F0E0A]/30" />
         <div className="relative flex justify-end px-4 md:px-0 py-16 md:py-24">
           <div
@@ -1422,7 +1112,7 @@ export default function PortfolioClient({
             <div className="mt-8 grid grid-cols-4 gap-2 md:gap-3">
               {contactThumbs.map((p) => (
                 <button key={p.id} type="button" onClick={() => setSelectedProject(p)} className="group relative aspect-square overflow-hidden bg-[#16393F]/10 cursor-none" aria-label={`View project: ${p.title}`}>
-                  <img src={p.posterAsset} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <ProjectMedia src={p.posterAsset} alt="" sizes="(min-width: 768px) 12vw, 25vw" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <span className="absolute inset-x-0 bottom-0 p-1.5 md:p-2 text-left text-[9px] md:text-[10px] leading-tight text-white bg-gradient-to-t from-black/70 to-transparent">{p.client}</span>
                 </button>
               ))}
@@ -1474,7 +1164,7 @@ export default function PortfolioClient({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#000000]/95 backdrop-blur-xl cursor-auto"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#000000]/95 cursor-auto"
             onClick={() => {
               setSelectedProject(null);
               setIsDrawerOpen(false);
@@ -1491,6 +1181,7 @@ export default function PortfolioClient({
             >
               <ProjectMedia
                 key={selectedProject.id}
+                full
                 src={selectedProject.posterAsset}
                 alt={selectedProject.title}
                 className="max-w-full max-h-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,1)]"
@@ -1522,14 +1213,14 @@ export default function PortfolioClient({
                   <button
                     onClick={() => stepProject(-1)}
                     aria-label="Previous project"
-                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 transition-colors"
+                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors"
                   >
                     ←
                   </button>
                   <button
                     onClick={() => stepProject(1)}
                     aria-label="Next project"
-                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 transition-colors"
+                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors"
                   >
                     →
                   </button>
@@ -1541,7 +1232,7 @@ export default function PortfolioClient({
             <div className="absolute top-6 right-6 md:top-12 md:right-12 z-20 flex gap-4" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-                className="px-6 py-3 flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors duration-300 font-mono text-xs uppercase tracking-widest border border-white/10"
+                className="px-6 py-3 flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300 font-mono text-xs uppercase tracking-widest border border-white/10"
               >
                 {isDrawerOpen ? "Hide Info" : "Info"}
               </button>
@@ -1550,7 +1241,7 @@ export default function PortfolioClient({
                   setSelectedProject(null);
                   setIsDrawerOpen(false);
                 }}
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-colors duration-300 border border-white/10"
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300 border border-white/10"
                 aria-label="Close project details"
               >
                 ✕
@@ -1565,7 +1256,7 @@ export default function PortfolioClient({
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: "100%", opacity: 0 }}
                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                  className="absolute right-0 top-0 bottom-0 w-full md:w-[450px] bg-[#030303]/90 backdrop-blur-2xl border-l border-white/10 p-8 md:p-12 flex flex-col z-30 shadow-[-20px_0_50px_rgba(0,0,0,0.8)] overflow-y-auto"
+                  className="absolute right-0 top-0 bottom-0 w-full md:w-[450px] bg-[#030303] border-l border-white/10 p-8 md:p-12 flex flex-col z-30 shadow-[-20px_0_50px_rgba(0,0,0,0.8)] overflow-y-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <span className="text-xs font-mono tracking-widest uppercase text-white/50 mb-2 block">
@@ -1653,7 +1344,7 @@ export default function PortfolioClient({
         {isSearchOpen && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-start justify-center pt-[10vh]"
+            className="fixed inset-0 z-[100] bg-black/75 flex items-start justify-center pt-[10vh]"
             onClick={() => setIsSearchOpen(false)}
           >
             <motion.div
@@ -1698,7 +1389,7 @@ export default function PortfolioClient({
                           project.posterAsset.endsWith('.mp4') || project.posterAsset.endsWith('.webm') ? (
                             <video src={project.posterAsset} aria-label={project.title} className="w-full h-full object-cover" autoPlay muted loop playsInline />
                           ) : (
-                            <img src={project.posterAsset} alt={project.title} className="w-full h-full object-cover" />
+                            <img src={thumbOf(project.posterAsset) || project.posterAsset} alt={project.title} loading="lazy" className="w-full h-full object-cover" />
                           )
                         )}
                       </div>

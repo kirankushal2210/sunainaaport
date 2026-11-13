@@ -717,6 +717,30 @@ export default function PortfolioClient({
         }
       }
 
+      // Hero → work transition: the hero recedes while the work section slides up over it
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        if (!worksRef.current) return;
+        gsap.fromTo(".hero-section",
+          { scale: 1, opacity: 1, yPercent: 0, borderRadius: 0 },
+          {
+            scale: 0.9,
+            opacity: 0.35,
+            yPercent: 6,
+            borderRadius: 32,
+            ease: "none",
+            scrollTrigger: { trigger: worksRef.current, start: "top bottom", end: "top 15%", scrub: 0.6 },
+          }
+        );
+        gsap.from("#works > *", {
+          y: 80,
+          opacity: 0,
+          ease: "none",
+          stagger: 0.04,
+          scrollTrigger: { trigger: worksRef.current, start: "top 95%", end: "top 35%", scrub: 0.6 },
+        });
+      });
+
       // Background morphing for Projects section
       if (worksRef.current) {
         ScrollTrigger.create({
@@ -780,7 +804,8 @@ export default function PortfolioClient({
       {/* ════════════════════════════════════════════
           SECTION 1 — HERO
           ════════════════════════════════════════════ */}
-      <section className="section-brutal min-h-screen flex flex-col justify-between relative overflow-hidden hero-dark">
+      <div className="hero-stage bg-black">
+      <section className="hero-section section-brutal min-h-screen flex flex-col justify-between relative overflow-hidden hero-dark origin-top will-change-transform" style={{ paddingBottom: "calc(clamp(4rem, 10vh, 10rem) + 6vh)" }}>
         {/* ── HERO VIDEO ── */}
         <div className="hero-video-container">
           <video
@@ -801,7 +826,7 @@ export default function PortfolioClient({
           <a href="#services" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Services</a>
           <a href="#info" className="nav-link nav-item hover:text-[#c8956c] transition-colors">About</a>
           <a href="#contact" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Contact</a>
-          <a href="/Kiran_Kushal_CV.pdf" download style={{ display: "inline-flex" }} className="nav-link nav-item items-center gap-1 whitespace-nowrap text-[#c8956c] opacity-80 hover:opacity-100 transition-opacity">
+          <a href="/Sunaina_CV.pdf" download="Sunaina_Nalla_CV.pdf" style={{ display: "inline-flex" }} className="nav-link nav-item items-center gap-1 whitespace-nowrap text-[#c8956c] opacity-80 hover:opacity-100 transition-opacity">
             Resume <ArrowUpRight size={12} />
           </a>
         </nav>
@@ -912,10 +937,12 @@ export default function PortfolioClient({
         </div>
       </section>
 
+      </div>
+
       {/* ════════════════════════════════════════════
           SECTION 2 — WORKS (Project List)
           ════════════════════════════════════════════ */}
-      <section id="works" className="py-24 md:py-32 px-4 sm:px-8 md:px-12 xl:px-16 bg-[#000000] text-white relative" ref={worksRef}>
+      <section id="works" className="works-sheet py-24 md:py-32 px-4 sm:px-8 md:px-12 xl:px-16 bg-[#000000] text-white relative z-20 -mt-[6vh] rounded-t-[1.75rem] md:rounded-t-[3rem] border-t border-white/15 shadow-[0_-30px_80px_rgba(0,0,0,0.6)]" ref={worksRef}>
         {/* Header */}
         <div className="mb-10 md:mb-14 relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
@@ -1344,7 +1371,7 @@ export default function PortfolioClient({
         <a
           ref={cvButtonRef}
           href="/Sunaina_CV.pdf"
-          download
+          download="Sunaina_Nalla_CV.pdf"
           className="cv-dossier-card group"
           onMouseMove={handleCvDossierMove}
           onMouseEnter={handleCvDossierEnter}

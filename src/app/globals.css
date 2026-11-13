@@ -1125,7 +1125,7 @@
 .spin-slow { animation: spin-slow 22s linear infinite; transform-origin: 50% 50%; }
 
 /* Client name rows: two marquees drifting in opposite directions */
-.client-track { animation: work-reel 60s linear infinite; }
+.client-track { animation: work-reel 60s linear infinite; will-change: transform; }
 .client-track-reverse { animation-direction: reverse; }
 @media (prefers-reduced-motion: reduce) {
   .spin-slow, .client-track { animation: none; }

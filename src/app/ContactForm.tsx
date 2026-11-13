@@ -132,17 +132,17 @@ export default function ContactForm() {
       {serverStatus.type === 'success' && (
         <div
           role="alert"
-          className="mb-8 p-6 bg-[#1a1a1a] border border-[#c8956c] text-[#f2ede4] rounded-lg shadow-xl animate-fade-in flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+          className="mb-8 p-6 bg-[#1a1a1a] border border-[#B4232F] text-[#EEE7DC] rounded-lg shadow-xl animate-fade-in flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
         >
           <div className="flex items-center gap-3.5">
-            <div className="w-8 h-8 rounded-full bg-[#c8956c]/20 border border-[#c8956c] flex items-center justify-center text-[#c8956c] font-bold text-sm shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#B4232F]/20 border border-[#B4232F] flex items-center justify-center text-[#B4232F] font-bold text-sm shrink-0">
               ✓
             </div>
             <div>
               <p className="font-semibold text-base font-sans tracking-wide text-white">
                 Inquiry Dispatched Successfully
               </p>
-              <p className="text-xs text-[#f2ede4]/80 mt-0.5 font-mono">
+              <p className="text-xs text-[#EEE7DC]/80 mt-0.5 font-mono">
                 {serverStatus.message}
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function ContactForm() {
           <button
             type="button"
             onClick={() => setServerStatus({ type: null, message: '' })}
-            className="text-[10px] font-mono uppercase tracking-widest text-[#c8956c] hover:text-white transition-colors underline whitespace-nowrap self-end md:self-center"
+            className="text-[10px] font-mono uppercase tracking-widest text-[#B4232F] hover:text-white transition-colors underline whitespace-nowrap self-end md:self-center"
           >
             Dismiss
           </button>
@@ -186,7 +186,7 @@ export default function ContactForm() {
               className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-faint)] flex justify-between"
             >
               <span>Name</span>
-              <span className="text-[#c8956c]">*</span>
+              <span className="text-[#B4232F]">*</span>
             </label>
             <input
               type="text"
@@ -199,7 +199,7 @@ export default function ContactForm() {
               className={`bg-transparent border-b py-3 outline-none text-[var(--color-ink)] transition-colors ${
                 errors.name
                   ? 'border-red-500/80 focus:border-red-500'
-                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#c8956c]'
+                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#B4232F]'
               } disabled:opacity-50`}
             />
             {errors.name && (
@@ -215,7 +215,7 @@ export default function ContactForm() {
               className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-faint)] flex justify-between"
             >
               <span>Email</span>
-              <span className="text-[#c8956c]">*</span>
+              <span className="text-[#B4232F]">*</span>
             </label>
             <input
               type="email"
@@ -228,7 +228,7 @@ export default function ContactForm() {
               className={`bg-transparent border-b py-3 outline-none text-[var(--color-ink)] transition-colors ${
                 errors.email
                   ? 'border-red-500/80 focus:border-red-500'
-                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#c8956c]'
+                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#B4232F]'
               } disabled:opacity-50`}
             />
             {errors.email && (
@@ -247,7 +247,7 @@ export default function ContactForm() {
               className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-faint)] flex justify-between"
             >
               <span>Service</span>
-              <span className="text-[#c8956c]">*</span>
+              <span className="text-[#B4232F]">*</span>
             </label>
             <select
               id="contact-service"
@@ -258,7 +258,7 @@ export default function ContactForm() {
               className={`bg-transparent border-b py-3 outline-none text-[var(--color-ink)] appearance-none cursor-pointer rounded-none transition-colors ${
                 errors.serviceRequested
                   ? 'border-red-500/80 focus:border-red-500'
-                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#c8956c]'
+                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#B4232F]'
               } disabled:opacity-50`}
             >
               <option value="Branding" className="bg-[var(--color-paper)] text-[var(--color-ink)]">
@@ -293,7 +293,7 @@ export default function ContactForm() {
               className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-faint)] flex justify-between"
             >
               <span>Budget</span>
-              <span className="text-[#c8956c]">*</span>
+              <span className="text-[#B4232F]">*</span>
             </label>
             <select
               id="contact-budget"
@@ -304,7 +304,7 @@ export default function ContactForm() {
               className={`bg-transparent border-b py-3 outline-none text-[var(--color-ink)] appearance-none cursor-pointer rounded-none transition-colors ${
                 errors.budget
                   ? 'border-red-500/80 focus:border-red-500'
-                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#c8956c]'
+                  : 'border-[var(--color-ink-faint)]/30 focus:border-[#B4232F]'
               } disabled:opacity-50`}
             >
               <option value="< $1k" className="bg-[var(--color-paper)] text-[var(--color-ink)]">
@@ -335,7 +335,7 @@ export default function ContactForm() {
             className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-faint)] flex justify-between"
           >
             <span>Project Details</span>
-            <span className="text-[#c8956c]">*</span>
+            <span className="text-[#B4232F]">*</span>
           </label>
           <textarea
             id="contact-message"
@@ -348,7 +348,7 @@ export default function ContactForm() {
             className={`bg-transparent border-b py-3 outline-none text-[var(--color-ink)] resize-none transition-colors ${
               errors.message
                 ? 'border-red-500/80 focus:border-red-500'
-                : 'border-[var(--color-ink-faint)]/30 focus:border-[#c8956c]'
+                : 'border-[var(--color-ink-faint)]/30 focus:border-[#B4232F]'
             } disabled:opacity-50`}
           />
           {errors.message && (
@@ -363,7 +363,7 @@ export default function ContactForm() {
           type="submit"
           id="contact-submit-btn"
           disabled={isSubmitting}
-          className="mt-6 px-10 py-4 bg-[var(--color-ink)] text-[var(--color-paper)] font-mono text-xs tracking-[0.25em] uppercase hover:bg-[#c8956c] hover:text-[var(--color-ink)] transition-all duration-300 w-full md:w-auto self-center disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
+          className="mt-6 px-10 py-4 bg-[var(--color-ink)] text-[var(--color-paper)] font-mono text-xs tracking-[0.25em] uppercase hover:bg-[#B4232F] hover:text-[var(--color-ink)] transition-all duration-300 w-full md:w-auto self-center disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
         >
           {isSubmitting ? (
             <>

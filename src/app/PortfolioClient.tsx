@@ -7,8 +7,8 @@ import { Command } from "cmdk";
 
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { ArrowUpRight, X, Search } from "lucide-react";
-import Tilt from "react-parallax-tilt";
 import ContactForm from "./ContactForm";
+import { PROJECTS } from "@/data/projects";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,6 +24,8 @@ interface Project {
   metrics: string[];
   content: string;
   client: string;
+  industry?: string;
+  featured?: boolean;
   year: string;
 }
 
@@ -227,18 +229,45 @@ const TOOLSET_CORES = [
   },
 ];
 
+/* ───────────── Portfolio helpers ───────────── */
+
+const PAGE_SIZE = 12;
+
+/** Public contact address shown in the contact section */
+const CONTACT_EMAIL = "sunainanalla419@gmail.com";
+
+/** Labels used for self-initiated work — excluded from client counts and the client list */
+const NON_CLIENTS = ["Concept", "Personal"];
+
+const SERVICES = [
+  { category: "Branding", title: "Brand Identity", text: "Logos, monograms, business cards, stationery and signage that make a business instantly recognisable." },
+  { category: "Social Media", title: "Social Media Creatives", text: "Scroll-stopping posts, reel covers, festive creatives and campaign series in a consistent brand voice." },
+  { category: "Print", title: "Print & Advertising", text: "Menus, flyers, brochures, banners, backdrops and vehicle branding, delivered print-ready." },
+  { category: "Packaging", title: "Packaging", text: "Labels, boxes, bags and product cartons that look premium on the shelf and in photos." },
+  { category: "Illustration", title: "Illustration", text: "Characters, sticker sets and custom illustrations that give a brand its own personality." },
+];
+
+const PROCESS = [
+  { step: "01", title: "Brief", text: "Tell me about your business, your audience and what you need — through the form, a call or a message." },
+  { step: "02", title: "Concepts", text: "I explore directions and share initial designs with the thinking behind each one." },
+  { step: "03", title: "Refine", text: "We review together and refine the chosen direction until it feels right." },
+  { step: "04", title: "Deliver", text: "You receive final files ready for print, social and web, in every format you need." },
+];
+
+
+const isVideoAsset = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
+
+function ProjectMedia({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  if (!src) return null;
+  if (isVideoAsset(src)) {
+    return <video src={src} aria-label={alt} className={className} autoPlay muted loop playsInline preload="metadata" />;
+  }
+  return <img src={src} alt={alt} className={className} loading="lazy" decoding="async" />;
+}
+
 /* ───────────── Fallback Data ───────────── */
 
-const MOCK_PROJECTS: Project[] = [
-  { id: "1", title: "Future Kids - Scholarship Poster", category: "Print", client: "Future Kids", year: "2025", posterAsset: "/projects/fk-scholarship.jpg", aspectRatio: "vertical", metrics: ["10k+ Impressions", "+25% Signups"], content: "Promotional poster for 100% scholarship and aptitude test, highlighting academic excellence." },
-  { id: "2", title: "Future Kids - Admissions Open", category: "Social Media", client: "Future Kids", year: "2025", posterAsset: "/projects/fk-admissions.jpg", aspectRatio: "vertical", metrics: ["+140% Engagement"], content: "Creative typography-led admissions open graphic with a welcoming campus environment." },
-  { id: "3", title: "The Park Arabian Mandi", category: "Branding", client: "The Park", year: "2025", posterAsset: "/projects/park-mandi-card.jpg", aspectRatio: "horizontal", metrics: ["Brand Identity Established"], content: "Premium business card design with gold foil accents and elegant typography." },
-  { id: "4", title: "Wittelsbach - Content Strategy", category: "Social Media", client: "Wittelsbach", year: "2025", posterAsset: "/projects/content-strategy.jpg", aspectRatio: "vertical", metrics: ["Lead Gen Asset"], content: "Bold, visually striking promotional graphic for content strategy services." },
-  { id: "5", title: "The Park Arabian Mandi - Packaging", category: "Packaging", client: "The Park", year: "2025", posterAsset: "/projects/mandi-bottle.jpg", aspectRatio: "vertical", metrics: ["Custom FMCG"], content: "Custom water bottle label packaging design with premium forest/animal elements." },
-  { id: "6", title: "Bandi Babu - Brand Logo", category: "Branding", client: "Bandi Babu", year: "2024", posterAsset: "/projects/bandi-babu-logo.jpg", aspectRatio: "square", metrics: ["Identity Relaunch"], content: "Character-driven logo design for a traditional food brand featuring custom Telugu typography." },
-  { id: "7", title: "Future Kids - Sankranthi Banner", category: "Print", client: "Future Kids", year: "2025", posterAsset: "/projects/fk-sankranthi.jpg", aspectRatio: "horizontal", metrics: ["Event Highlight"], content: "Festive backdrop banner for Sankranthi celebrations featuring cultural elements." },
-  { id: "8", title: "Gal Punjabi Dhaba - Menu Design", category: "Print", client: "Gal Punjabi Dhaba", year: "2025", posterAsset: "/projects/punjabi-menu.jpg", aspectRatio: "vertical", metrics: ["Dine-in Utility"], content: "Traditional and extensive dine-in menu design for a Punjabi restaurant." },
-];
+const MOCK_PROJECTS: Project[] = PROJECTS.map((p, i) => ({ id: String(i + 1), ...p }));
 
 const MOCK_EXPERIENCES: Experience[] = [
   { id: "1", company: "NarrativeX Media", role: "Graphic Designer", duration: "January 2026 — Present", description: ["Led design of branding, social, print, and digital creatives.", "Collaborated with cross-functional teams."] },
@@ -344,9 +373,62 @@ export default function PortfolioClient({
 
   const categories = ["All", ...Array.from(new Set(projects.map((p) => p.category)))];
 
+  const [activeIndustry, setActiveIndustry] = useState<string>("All");
+  const industries = Array.from(new Set(projects.map((p) => p.industry).filter(Boolean) as string[]))
+    .sort((a, b) => {
+      const last = (x: string) => (x === "Personal & Concept" ? 1 : 0);
+      const n = (x: string) => projects.filter((p) => p.industry === x).length;
+      return last(a) - last(b) || n(b) - n(a);
+    });
+
   const filteredProjects = projects.filter((p) => {
-    return activeCategory === "All" || p.category === activeCategory;
+    return (activeCategory === "All" || p.category === activeCategory)
+      && (activeIndustry === "All" || p.industry === activeIndustry);
   });
+
+  // Hand-picked highlights; falls back to the first six if none are flagged (e.g. older DB rows)
+  const flagged = projects.filter((p) => p.featured);
+  const featuredProjects = (flagged.length ? flagged : projects).slice(0, 6);
+  // Hero reel: a broad sample of the work, so visitors see real pieces in the first screen
+  const reelProjects = projects.filter((p) => !isVideoAsset(p.posterAsset)).slice(0, 16);
+  const clientNames = Array.from(new Set(projects.map((p) => p.client))).filter((c) => !NON_CLIENTS.includes(c));
+
+  /** Jump to the full grid with a discipline pre-selected (used by Services + hero) */
+  const openWork = (category: string = "All") => {
+    setActiveCategory(category);
+    setActiveIndustry("All");
+    setVisibleCount(PAGE_SIZE);
+    requestAnimationFrame(() => document.getElementById("all-work")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  };
+
+  /* ── Portfolio layout state ── */
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const visibleProjects = filteredProjects.slice(0, visibleCount);
+
+  // Prev / next within the current filter, so the viewer works like a gallery
+  const selectedIndex = selectedProject ? filteredProjects.findIndex((p) => p.id === selectedProject.id) : -1;
+  const stepProject = (dir: 1 | -1) => {
+    if (selectedIndex < 0 || filteredProjects.length < 2) return;
+    const next = filteredProjects[(selectedIndex + dir + filteredProjects.length) % filteredProjects.length];
+    setSelectedProject(next);
+  };
+  // Keyboard handler reads the latest stepProject through a ref, so the listener isn't re-bound every render
+  const stepRef = useRef(stepProject);
+  useEffect(() => { stepRef.current = stepProject; });
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") stepRef.current(1);
+      else if (e.key === "ArrowLeft") stepRef.current(-1);
+      else if (e.key === "Escape") { setSelectedProject(null); setIsDrawerOpen(false); }
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prevOverflow; };
+  }, [selectedProject]);
 
   /* ── Creative Toolset Physics State ── */
   const toolsetContainerRef = useRef<HTMLElement>(null);
@@ -687,7 +769,7 @@ export default function PortfolioClient({
 
   /* ── Bio text word splitting for staggered animation ── */
   const bioText =
-    "Graphic Designer with a Bachelor's degree in Multimedia & Animation and professional experience in branding, social media, print, and digital design. Passionate about creativity and transforming ideas into impactful visual solutions that strengthen brand identity, engage audiences, and leave a lasting impression.";
+    "Branding, social media, print and packaging design for restaurants, schools, real estate and growing businesses — designed to get noticed and remembered.";
   const bioWords = bioText.split(" ");
 
   return (
@@ -714,15 +796,25 @@ export default function PortfolioClient({
           />
         </div>
         {/* Navigation — stacked left */}
-        <nav className="flex flex-col gap-2 absolute top-8 left-8 md:left-12 z-30">
-          <a href="#works" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Works</a>
-          <a href="#info" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Info</a>
+        <nav aria-label="Main" className="flex flex-row flex-wrap items-center gap-x-5 gap-y-2 md:gap-x-8 max-w-[52%] md:max-w-none absolute top-9 left-6 md:left-12 z-30">
+          <a href="#works" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Work</a>
+          <a href="#services" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Services</a>
+          <a href="#info" className="nav-link nav-item hover:text-[#c8956c] transition-colors">About</a>
           <a href="#contact" className="nav-link nav-item hover:text-[#c8956c] transition-colors">Contact</a>
-          <a href="/Kiran_Kushal_CV.pdf" download className="nav-link nav-item flex items-center gap-1 text-[#c8956c] opacity-80 hover:opacity-100 transition-opacity mt-1">
+          <a href="/Kiran_Kushal_CV.pdf" download style={{ display: "inline-flex" }} className="nav-link nav-item items-center gap-1 whitespace-nowrap text-[#c8956c] opacity-80 hover:opacity-100 transition-opacity">
             Resume <ArrowUpRight size={12} />
           </a>
         </nav>
 
+
+        {/* Primary inquiry CTA — top right */}
+        <a
+          href="#contact"
+          className="nav-item cta-solid absolute top-7 right-6 md:right-12 z-30 px-5 py-2.5 rounded-full bg-[#e8ddd0] text-[#0A0E17] text-xs font-mono uppercase tracking-widest hover:bg-[#c8956c] transition-colors"
+          style={{ color: "#0A0E17" }}
+        >
+          Let&apos;s talk
+        </a>
 
         {/* Fragment decorative text — scattered */}
         <div className="fragment-text display-fragment absolute top-[6%] right-[-3%] select-none" aria-hidden="true">
@@ -738,10 +830,10 @@ export default function PortfolioClient({
 
 
         {/* ── HERO CONTENT ── */}
-        <div className="flex flex-col flex-grow relative z-20 mt-20 md:mt-0 pt-16 md:pt-24">
+        <div className="flex flex-col flex-grow relative z-20 mt-20 md:mt-0 pt-16 md:pt-14">
           {/* Name — massive, bleeds off edges */}
           <div className="overflow-hidden bleed-left mb-4 md:mb-6">
-            <h1 className="hero-name-line display-massive uppercase">
+            <h1 className="hero-name-line display-massive uppercase" style={{ fontSize: "clamp(4.5rem, 16vw, 16rem)" }}>
               Sunaina.
             </h1>
           </div>
@@ -749,7 +841,7 @@ export default function PortfolioClient({
 
 
           {/* Role tag */}
-          <div className="overflow-hidden bleed-left mb-8 md:mb-12">
+          <div className="overflow-hidden bleed-left mb-6 md:mb-8">
             <p
               className="hero-role text-lg md:text-2xl uppercase tracking-[0.35em]"
               style={{ fontFamily: "var(--font-body)", color: "var(--color-ink-light)" }}
@@ -781,20 +873,383 @@ export default function PortfolioClient({
         </div>
 
         {/* CTA — bottom */}
-        <div className="flex items-end justify-between relative z-20 pb-4 mt-8">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4 relative z-20 mt-8 md:mt-10">
           <a
             href="#works"
-            className="hero-cta cmyk-shift inline-block text-lg md:text-xl uppercase tracking-widest"
-            style={{ fontFamily: "var(--font-display)" }}
+            className="hero-cta cta-solid inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#e8ddd0] text-[#0A0E17] text-xs md:text-sm font-mono uppercase tracking-widest hover:bg-[#c8956c] transition-colors"
+            style={{ color: "#0A0E17" }}
           >
-            View Projects →
+            View work <ArrowUpRight size={14} />
           </a>
-          <span
-            className="hero-cta text-xs tracking-[0.2em] uppercase hidden md:block"
-            style={{ color: "var(--color-ink-faint)", fontFamily: "var(--font-body)" }}
+          <a
+            href="#contact"
+            className="hero-cta inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#e8ddd0]/30 text-xs md:text-sm font-mono uppercase tracking-widest hover:border-[#e8ddd0] transition-colors"
           >
-            Scroll to discover
+            Start a project
+          </a>
+          <span className="hero-cta text-[11px] font-mono uppercase tracking-[0.2em] opacity-50 ml-1">
+            {projects.length} projects · {clientNames.length} clients
           </span>
+        </div>
+
+        {/* Work reel — real pieces visible in the first screen */}
+        <div className="hero-cta work-reel relative z-20 mt-8 md:mt-10 -mx-[clamp(1.5rem,5vw,6rem)]" aria-label="Recent work">
+          <div className="work-reel-track flex gap-3 md:gap-4 w-max">
+            {[...reelProjects, ...reelProjects].map((project, i) => (
+              <button
+                type="button"
+                key={`${project.id}-${i}`}
+                tabIndex={i < reelProjects.length ? 0 : -1}
+                aria-hidden={i >= reelProjects.length}
+                aria-label={`View project: ${project.title}`}
+                onClick={() => setSelectedProject(project)}
+                className="shrink-0 h-32 md:h-44 rounded-md overflow-hidden ring-1 ring-white/10 bg-white/5 hover:ring-[#c8956c] transition-shadow"
+              >
+                <img src={project.posterAsset} alt="" loading="lazy" decoding="async" className="h-full w-auto block" />
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════
+          SECTION 2 — WORKS (Project List)
+          ════════════════════════════════════════════ */}
+      <section id="works" className="py-24 md:py-32 px-4 sm:px-8 md:px-12 xl:px-16 bg-[#000000] text-white relative" ref={worksRef}>
+        {/* Header */}
+        <div className="mb-10 md:mb-14 relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <span className="text-xs tracking-[0.3em] uppercase text-white/40 font-mono">
+              [ 01 // SELECTED WORK ]
+            </span>
+            <h2 className="text-5xl md:text-7xl font-display mt-4 tracking-tight leading-[0.95]">Selected work</h2>
+          </div>
+          <p className="max-w-sm text-sm text-white/50 leading-relaxed md:text-right">
+            {projects.length} projects across branding, print, packaging, social and illustration, for {new Set(projects.map((p) => p.client).filter((c) => c !== "Concept" && c !== "Personal")).size} clients.
+          </p>
+        </div>
+
+        {/* Featured — hand-picked highlights shown large */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-6 md:gap-x-8 gap-y-12 md:gap-y-16 mb-24 md:mb-32 relative z-10">
+          {featuredProjects.map((project, i) => {
+            const wide = i % 4 === 0 || i % 4 === 3;
+            return (
+              <motion.button
+                type="button"
+                key={project.id}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className={`group text-left cursor-none ${wide ? "md:col-span-7" : "md:col-span-5"}`}
+                aria-label={`View project: ${project.title}`}
+                onClick={() => setSelectedProject(project)}
+                onMouseEnter={() => cursorRef.current?.classList.add("inspect")}
+                onMouseLeave={() => cursorRef.current?.classList.remove("inspect")}
+              >
+                <div className={`relative ${wide ? "aspect-[4/3]" : "aspect-[4/3] md:aspect-[4/5]"} rounded-md overflow-hidden bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.07),_rgba(255,255,255,0.02))] ring-1 ring-white/10 flex items-center justify-center p-6 md:p-10`}>
+                  <ProjectMedia
+                    src={project.posterAsset}
+                    alt={project.title}
+                    className="max-w-full max-h-full w-auto h-auto object-contain shadow-[0_30px_60px_rgba(0,0,0,0.6)] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+                  />
+                  <span className="absolute top-4 left-4 text-[11px] font-mono text-white/40">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="absolute top-4 right-4 text-[11px] font-mono uppercase tracking-widest text-white/40">Featured</span>
+                </div>
+                <div className="flex items-start justify-between gap-6 pt-5">
+                  <div className="min-w-0">
+                    <span className="block text-[11px] font-mono uppercase tracking-widest text-white/40 mb-2">
+                      {project.category}{project.industry ? ` · ${project.industry}` : ""}
+                    </span>
+                    <h3 className="text-2xl md:text-3xl font-display text-white leading-tight">{project.title}</h3>
+                    <p className="text-sm text-white/50 leading-relaxed mt-2 max-w-[52ch] line-clamp-2">{project.content}</p>
+                  </div>
+                  <span className="w-11 h-11 shrink-0 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
+                    <ArrowUpRight size={18} />
+                  </span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <div id="all-work" className="scroll-mt-4 flex items-end justify-between gap-6 mb-6 relative z-10">
+          <h3 className="text-3xl md:text-5xl font-display tracking-tight">All projects</h3>
+          <span className="text-[11px] font-mono uppercase tracking-widest text-white/40">{filteredProjects.length} shown</span>
+        </div>
+
+        {/* Sticky filter bar */}
+        <div className="sticky top-0 z-30 -mx-4 sm:-mx-8 md:-mx-12 xl:-mx-16 px-4 sm:px-8 md:px-12 xl:px-16 py-4 mb-8 md:mb-12 bg-black/80 backdrop-blur-md border-b border-white/10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar -my-1 py-1" role="tablist" aria-label="Filter projects by category">
+              {categories.map((category) => {
+                const count = projects.filter((p) => (category === "All" || p.category === category) && (activeIndustry === "All" || p.industry === activeIndustry)).length;
+                const active = activeCategory === category;
+                return (
+                  <button
+                    key={category}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => { setActiveCategory(category); setVisibleCount(PAGE_SIZE); }}
+                    className={`shrink-0 px-4 py-2 rounded-full text-[11px] md:text-xs tracking-widest uppercase transition-colors duration-300 font-mono ${active
+                      ? "bg-white text-black"
+                      : "border border-white/15 text-white/60 hover:border-white/60 hover:text-white"
+                      }`}
+                  >
+                    {category}
+                    <span className={`ml-2 ${active ? "text-black/50" : "text-white/30"}`}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+            <label className="relative">
+              <span className="sr-only">Filter by industry</span>
+              <select
+                value={activeIndustry}
+                onChange={(e) => { setActiveIndustry(e.target.value); setVisibleCount(PAGE_SIZE); }}
+                className="appearance-none bg-transparent border border-white/15 hover:border-white/60 rounded-full pl-4 pr-9 py-2 text-[11px] md:text-xs font-mono uppercase tracking-widest text-white/80 cursor-pointer focus:outline-none focus:border-white"
+              >
+                <option value="All" className="bg-black">All industries</option>
+                {industries.map((ind) => (
+                  <option key={ind} value={ind} className="bg-black">{ind} ({projects.filter((p) => p.industry === ind).length})</option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 text-[10px]">▾</span>
+            </label>
+            <div className="hidden sm:flex shrink-0 rounded-full border border-white/15 p-1" role="group" aria-label="Layout">
+              {(["grid", "list"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  aria-pressed={viewMode === mode}
+                  className={`px-3 py-1.5 rounded-full text-[11px] font-mono uppercase tracking-widest transition-colors ${viewMode === mode ? "bg-white/15 text-white" : "text-white/40 hover:text-white"}`}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
+            </div>
+          </div>
+        </div>
+
+        {viewMode === "grid" ? (
+          /* Masonry grid — each piece keeps its real proportions */
+          <div key={activeCategory} className="columns-1 min-[480px]:columns-2 lg:columns-3 2xl:columns-4 gap-4 md:gap-6 relative z-10">
+            {visibleProjects.map((project, i) => (
+              <motion.button
+                type="button"
+                key={project.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (i % 4) * 0.05 }}
+                className="group mb-4 md:mb-6 w-full break-inside-avoid text-left cursor-none block"
+                aria-label={`View project: ${project.title}`}
+                onClick={() => setSelectedProject(project)}
+                onMouseEnter={() => cursorRef.current?.classList.add("inspect")}
+                onMouseLeave={() => cursorRef.current?.classList.remove("inspect")}
+              >
+                <div className="relative overflow-hidden rounded-md bg-white/[0.04] ring-1 ring-white/10">
+                  <ProjectMedia
+                    src={project.posterAsset}
+                    alt={project.title}
+                    className="w-full h-auto block transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between gap-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-white/80">{project.category}</span>
+                    <span className="w-9 h-9 shrink-0 rounded-full bg-white text-black flex items-center justify-center">
+                      <ArrowUpRight size={16} />
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-baseline justify-between gap-4 pt-3 px-0.5">
+                  <h3 className="text-lg md:text-xl font-display text-white/90 leading-snug">{project.title}</h3>
+                  <span className="text-[11px] font-mono text-white/35 shrink-0">{project.year}</span>
+                </div>
+                <p className="text-xs text-white/40 px-0.5 mt-0.5">{project.client}{project.industry ? ` · ${project.industry}` : ""}</p>
+              </motion.button>
+            ))}
+          </div>
+        ) : (
+          /* Index list — scan many projects quickly */
+          <ul key={activeCategory} className="relative z-10 border-t border-white/10">
+            {visibleProjects.map((project, i) => (
+              <li key={project.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProject(project)}
+                  onMouseEnter={() => cursorRef.current?.classList.add("inspect")}
+                  onMouseLeave={() => cursorRef.current?.classList.remove("inspect")}
+                  className="group w-full grid grid-cols-[64px_1fr_auto] md:grid-cols-[40px_88px_1.4fr_1fr_140px_60px] items-center gap-4 md:gap-6 py-4 border-b border-white/10 text-left cursor-none hover:bg-white/[0.03] transition-colors"
+                  aria-label={`View project: ${project.title}`}
+                >
+                  <span className="hidden md:block text-[11px] font-mono text-white/30">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="block w-16 md:w-[88px] aspect-[4/3] overflow-hidden rounded-sm bg-white/[0.04]">
+                    <ProjectMedia src={project.posterAsset} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-lg md:text-2xl font-display text-white/90 truncate group-hover:translate-x-1 transition-transform">{project.title}</span>
+                    <span className="block md:hidden text-xs text-white/40 truncate">{project.client} · {project.category}</span>
+                  </span>
+                  <span className="hidden md:block text-sm text-white/50 truncate">{project.client}</span>
+                  <span className="hidden md:block text-[11px] font-mono uppercase tracking-widest text-white/40">{project.category}</span>
+                  <span className="text-[11px] font-mono text-white/35 text-right">{project.year}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-24">
+            <p className="text-white/40 font-mono text-sm mb-4">No projects match these filters yet.</p>
+            <button onClick={() => { setActiveCategory("All"); setActiveIndustry("All"); }} className="text-xs font-mono uppercase tracking-widest underline underline-offset-4">Clear filters</button>
+          </div>
+        )}
+
+        {/* Show more */}
+        {filteredProjects.length > visibleCount && (
+          <div className="flex flex-col items-center gap-3 mt-12 md:mt-16 relative z-10">
+            <span className="text-[11px] font-mono text-white/35 uppercase tracking-widest">
+              Showing {visibleCount} of {filteredProjects.length}
+            </span>
+            <button
+              onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+              className="px-8 py-3 rounded-full border border-white/25 hover:bg-white hover:text-black transition-colors font-mono text-xs uppercase tracking-widest"
+            >
+              Show more work
+            </button>
+          </div>
+        )}
+
+        {/* Inquiry CTA at the end of the work */}
+        <div className="mt-24 md:mt-32 pt-12 border-t border-white/10 flex flex-col md:flex-row md:items-end md:justify-between gap-8 relative z-10">
+          <h3 className="text-4xl md:text-6xl font-display tracking-tight leading-[0.95] max-w-[16ch]">Like what you see? Let&apos;s make yours next.</h3>
+          <a href="#contact" className="self-start md:self-auto inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-black font-mono text-xs uppercase tracking-widest hover:bg-[#c8956c] transition-colors">
+            Start a project <ArrowUpRight size={14} />
+          </a>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════
+          CLIENT LOGO MARQUEE (TRUST SIGNAL)
+          ════════════════════════════════════════════ */}
+      <section aria-label="Clients" className="py-8 border-y border-[var(--color-ink-faint)]/10 overflow-hidden bg-[var(--color-paper)]">
+        <p className="text-center text-[11px] font-mono uppercase tracking-[0.3em] text-[var(--color-ink-faint)] mb-4">Trusted by {clientNames.length} brands</p>
+        <div className="marquee-container w-full h-[60px] md:h-[80px]" aria-hidden="true">
+          <div className="marquee-content h-full opacity-60">
+            {clientNames.map((client, i) => (
+              <span key={i} className="text-2xl md:text-3xl font-display uppercase tracking-widest text-[var(--color-ink-faint)] px-12 whitespace-nowrap">
+                {client}
+              </span>
+            ))}
+            {/* Duplicate for seamless infinite loop */}
+            {clientNames.map((client, i) => (
+              <span key={`dup-${i}`} className="text-2xl md:text-3xl font-display uppercase tracking-widest text-[var(--color-ink-faint)] px-12 whitespace-nowrap">
+                {client}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════
+          SERVICES — each links to matching work
+          ════════════════════════════════════════════ */}
+      <section id="services" className="section-brutal">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+          <div>
+            <span className="text-xs tracking-[0.3em] uppercase font-mono" style={{ color: "var(--color-ink-faint)" }}>[ 02 // SERVICES ]</span>
+            <h2 className="text-5xl md:text-7xl mt-4 tracking-tight leading-[0.95]" style={{ fontFamily: "var(--font-display)" }}>What I can do<br className="hidden md:block" /> for your brand</h2>
+          </div>
+          <a href="#contact" className="self-start md:self-auto inline-flex items-center gap-2 px-6 py-3 rounded-full border border-current text-xs font-mono uppercase tracking-widest hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)] transition-colors">
+            Get a quote <ArrowUpRight size={14} />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l" style={{ borderColor: "color-mix(in srgb, var(--color-ink) 15%, transparent)" }}>
+          {SERVICES.map((svc, i) => {
+            const count = projects.filter((p) => p.category === svc.category).length;
+            return (
+              <div key={svc.title} className="p-6 md:p-8 border-r border-b flex flex-col gap-4 min-h-[240px]" style={{ borderColor: "color-mix(in srgb, var(--color-ink) 15%, transparent)" }}>
+                <span className="text-[11px] font-mono" style={{ color: "var(--color-ink-faint)" }}>{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="text-2xl md:text-3xl" style={{ fontFamily: "var(--font-display)" }}>{svc.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--color-ink-light)" }}>{svc.text}</p>
+                {count > 0 && (
+                  <button onClick={() => openWork(svc.category)} className="mt-auto self-start text-xs font-mono uppercase tracking-widest underline underline-offset-4 decoration-1 hover:text-[#c8956c] transition-colors">
+                    See {count} examples →
+                  </button>
+                )}
+              </div>
+            );
+          })}
+          <a href="#contact" className="p-6 md:p-8 border-r border-b flex flex-col gap-4 min-h-[240px] bg-[var(--color-ink)] text-[var(--color-paper)] group" style={{ borderColor: "color-mix(in srgb, var(--color-ink) 15%, transparent)" }}>
+            <span className="text-[11px] font-mono opacity-60">06</span>
+            <h3 className="text-2xl md:text-3xl" style={{ fontFamily: "var(--font-display)" }}>Something else?</h3>
+            <p className="text-sm leading-relaxed opacity-70">Have a project that doesn&apos;t fit a box? Tell me about it and we&apos;ll figure it out together.</p>
+            <span className="mt-auto inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest">Let&apos;s talk <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" /></span>
+          </a>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════
+          PROCESS — what working together looks like
+          ════════════════════════════════════════════ */}
+      <section aria-labelledby="process-title" className="section-brutal pt-0">
+        <span className="text-xs tracking-[0.3em] uppercase font-mono" style={{ color: "var(--color-ink-faint)" }}>[ 03 // PROCESS ]</span>
+        <h2 id="process-title" className="text-4xl md:text-6xl mt-4 mb-10 md:mb-14 tracking-tight" style={{ fontFamily: "var(--font-display)" }}>How we&apos;ll work together</h2>
+        <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+          {PROCESS.map((step) => (
+            <li key={step.step} className="border-t pt-5" style={{ borderColor: "color-mix(in srgb, var(--color-ink) 25%, transparent)" }}>
+              <span className="text-[11px] font-mono" style={{ color: "#c8956c" }}>{step.step}</span>
+              <h3 className="text-2xl mt-2 mb-2" style={{ fontFamily: "var(--font-display)" }}>{step.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--color-ink-light)" }}>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ════════════════════════════════════════════
+          SECTION 3 — INFO / ABOUT
+          ════════════════════════════════════════════ */}
+      <section id="info" className="section-brutal">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
+          {/* Left — pull quote */}
+          <div className="md:col-span-5">
+            <h2 className="display-large cmyk-shift leading-[0.85] mb-8">About</h2>
+            <blockquote
+              className="text-3xl md:text-5xl leading-[1.1] tracking-tight"
+              style={{ fontFamily: "var(--font-display)", color: "var(--color-ink)" }}
+            >
+              &ldquo;Design is not what it looks like. Design is how the ink
+              bleeds into the paper.&rdquo;
+            </blockquote>
+          </div>
+
+          {/* Right — experience */}
+          <div className="md:col-span-6 md:col-start-7">
+            <span className="text-xs tracking-[0.3em] uppercase block mb-8" style={{ color: "var(--color-ink-faint)", fontFamily: "var(--font-body)" }}>
+              Experience
+            </span>
+
+            {experiences.map((exp) => (
+              <div key={exp.id} className="experience-item">
+                <h3 className="text-xl md:text-2xl mb-1" style={{ fontFamily: "var(--font-display)" }}>
+                  {exp.company}
+                </h3>
+                <p className="text-sm mb-1" style={{ color: "var(--color-ink-light)" }}>
+                  {exp.role} · {exp.duration}
+                </p>
+                {exp.description.map((desc, j) => (
+                  <p key={j} className="text-sm" style={{ color: "var(--color-ink-faint)" }}>
+                    {desc}
+                  </p>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -855,180 +1310,31 @@ export default function PortfolioClient({
       </section>
 
       {/* ════════════════════════════════════════════
-          CLIENT LOGO MARQUEE (TRUST SIGNAL)
-          ════════════════════════════════════════════ */}
-      <section className="py-8 border-y border-[var(--color-ink-faint)]/10 overflow-hidden bg-[var(--color-paper)]">
-        <div className="marquee-container w-full h-[60px] md:h-[80px]" aria-hidden="true">
-          <div className="marquee-content h-full opacity-60">
-            {["NarrativeX Media", "Wittelsbach", "Future Kids", "Cakes & Co.", "The Park Arabian Mandi", "ABNA Group"].map((client, i) => (
-              <span key={i} className="text-2xl md:text-3xl font-display uppercase tracking-widest text-[var(--color-ink-faint)] px-12 whitespace-nowrap">
-                {client}
-              </span>
-            ))}
-            {/* Duplicate for seamless infinite loop */}
-            {["NarrativeX Media", "Wittelsbach", "Future Kids", "Cakes & Co.", "The Park Arabian Mandi", "ABNA Group"].map((client, i) => (
-              <span key={`dup-${i}`} className="text-2xl md:text-3xl font-display uppercase tracking-widest text-[var(--color-ink-faint)] px-12 whitespace-nowrap">
-                {client}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════
-          SECTION 2 — WORKS (Project List)
-          ════════════════════════════════════════════ */}
-      <section id="works" className="py-24 px-8 md:px-16 bg-[#000000] text-white overflow-hidden relative" ref={worksRef}>
-        <div className="mb-16 md:mb-24 relative z-10">
-          <span className="text-xs tracking-[0.3em] uppercase text-white/40 font-mono">
-            [ 01 // 3D STAGE ]
-          </span>
-          <h2 className="text-5xl md:text-7xl font-display mt-4 tracking-tight">Interactive <br /> Case Studies</h2>
-        </div>
-
-        {/* We keep the filter logic but render the 3D grid */}
-        <div className="mb-16 relative z-10">
-          <div className="flex flex-wrap gap-4 mt-8">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2 rounded-full text-xs md:text-sm tracking-widest uppercase transition-colors duration-300 font-mono ${activeCategory === category
-                    ? "bg-white text-[#000000]"
-                    : "bg-transparent border border-white/20 text-white/70 hover:border-white hover:text-white"
-                  }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <motion.div layout className="projects-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 md:gap-24 w-full relative z-10">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, i) => {
-              // Determine frame style based on category
-              const isMobileFrame = project.category === "Social Media" || project.category === "Packaging";
-              const frameClass = isMobileFrame
-                ? "aspect-[9/19] rounded-[2.5rem] md:rounded-[3rem] border-[6px] md:border-[10px] border-[#1a1a1a] shadow-[inset_0_0_20px_rgba(255,255,255,0.05),_0_30px_60px_rgba(0,0,0,0.8)]"
-                : "aspect-[4/3] rounded-xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] bg-white/5 backdrop-blur-md p-2";
-
-              return (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                  transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                  key={project.id}
-                  className={`relative group cursor-none flex flex-col justify-center items-center gap-6 ${i % 2 !== 0 ? 'md:mt-24' : ''}`}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`View project: ${project.title}`}
-                  onClick={() => setSelectedProject(project)}
-                  onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedProject(project); } }}
-                  onMouseEnter={() => { if (cursorRef.current) cursorRef.current.classList.add("inspect") }}
-                  onMouseLeave={() => { if (cursorRef.current) cursorRef.current.classList.remove("inspect") }}
-                >
-                  <Tilt
-                    tiltMaxAngleX={15}
-                    tiltMaxAngleY={15}
-                    perspective={1200}
-                    transitionSpeed={1000}
-                    scale={1.03}
-                    glareEnable={true}
-                    glareMaxOpacity={0.3}
-                    glareColor="#ffffff"
-                    glarePosition="all"
-                    className="w-full relative"
-                  >
-                    <div className={`relative overflow-hidden w-full ${frameClass} transform-gpu`}>
-                      {/* Inner Glass border for Acrylic */}
-                      {!isMobileFrame && <div className="absolute inset-0 rounded-lg border border-white/20 z-20 pointer-events-none"></div>}
-
-                      {project.posterAsset && (
-                        <img
-                          src={project.posterAsset}
-                          alt={project.title}
-                          className={`w-full h-full object-cover ${!isMobileFrame && "rounded-lg"}`}
-                        />
-                      )}
-
-                      {/* Dark overlay that fades on hover */}
-                      <div className="absolute inset-0 bg-[#000000]/40 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
-                    </div>
-                  </Tilt>
-
-                  {/* Minimalist Info Tag (Fades out on hover) */}
-                  <div className="flex w-full justify-between items-end px-2 opacity-100 group-hover:opacity-0 transition-opacity duration-500">
-                    <h3 className="text-xl md:text-2xl font-display text-white/90 leading-tight">{project.title}</h3>
-                    <span className="text-xs font-mono text-white/40">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </motion.div>
-      </section>
-
-      {/* ════════════════════════════════════════════
-          SECTION 3 — INFO / ABOUT
-          ════════════════════════════════════════════ */}
-      <section id="info" className="section-brutal">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
-          {/* Left — pull quote */}
-          <div className="md:col-span-5">
-            <h2 className="display-large cmyk-shift leading-[0.85] mb-8">About</h2>
-            <blockquote
-              className="text-3xl md:text-5xl leading-[1.1] tracking-tight"
-              style={{ fontFamily: "var(--font-display)", color: "var(--color-ink)" }}
-            >
-              &ldquo;Design is not what it looks like. Design is how the ink
-              bleeds into the paper.&rdquo;
-            </blockquote>
-          </div>
-
-          {/* Right — experience */}
-          <div className="md:col-span-6 md:col-start-7">
-            <span className="text-xs tracking-[0.3em] uppercase block mb-8" style={{ color: "var(--color-ink-faint)", fontFamily: "var(--font-body)" }}>
-              Experience
-            </span>
-
-            {experiences.map((exp) => (
-              <div key={exp.id} className="experience-item">
-                <h3 className="text-xl md:text-2xl mb-1" style={{ fontFamily: "var(--font-display)" }}>
-                  {exp.company}
-                </h3>
-                <p className="text-sm mb-1" style={{ color: "var(--color-ink-light)" }}>
-                  {exp.role} · {exp.duration}
-                </p>
-                {exp.description.map((desc, j) => (
-                  <p key={j} className="text-sm" style={{ color: "var(--color-ink-faint)" }}>
-                    {desc}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════
           SECTION 4 — CONTACT
           ════════════════════════════════════════════ */}
       <section id="contact" className="section-brutal flex flex-col items-center">
-        <span className="text-xs tracking-[0.3em] uppercase block mb-12 text-[var(--color-ink-faint)] font-mono text-center">
+        <span className="text-xs tracking-[0.3em] uppercase block mb-6 text-[var(--color-ink-faint)] font-mono text-center">
           Get In Touch
+        </span>
+        <h2 className="text-5xl md:text-8xl tracking-tight leading-[0.9] text-center mb-6" style={{ fontFamily: "var(--font-display)" }}>
+          Have a project?<br />Let&apos;s talk.
+        </h2>
+        <p className="text-sm md:text-base text-center max-w-[46ch] mb-8" style={{ color: "var(--color-ink-light)" }}>
+          Tell me a little about your business and what you need. I&apos;ll get back to you with ideas and a quote.
+        </p>
+        <a
+          href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Design project enquiry")}`}
+          className="group inline-flex items-center gap-2 text-lg md:text-2xl mb-4 border-b border-current pb-1 hover:text-[#c8956c] transition-colors"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {CONTACT_EMAIL}
+          <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </a>
+        <span className="text-[11px] font-mono uppercase tracking-[0.3em] mb-12" style={{ color: "var(--color-ink-faint)" }}>
+          or send a message below
         </span>
 
         <ContactForm />
-
-        <div className="flex justify-center gap-8 mt-24">
-          <a href="#" aria-label="Visit Behance profile (link not yet configured)" className="nav-link inline-block cmyk-shift">Behance</a>
-          <a href="#" aria-label="Visit LinkedIn profile (link not yet configured)" className="nav-link inline-block cmyk-shift">LinkedIn</a>
-          <a href="#" aria-label="Visit Dribbble profile (link not yet configured)" className="nav-link inline-block cmyk-shift">Dribbble</a>
-          <a href="#" aria-label="Visit Instagram profile (link not yet configured)" className="nav-link inline-block cmyk-shift">Instagram</a>
-        </div>
       </section>
 
       {/* ════════════════════════════════════════════
@@ -1075,7 +1381,7 @@ export default function PortfolioClient({
           ════════════════════════════════════════════ */}
       <footer className="marquee-container" aria-label="Site footer">
         <div className="marquee-content" aria-hidden="true">
-          <span>© 2024 SUNAINA</span>
+          <span>© {new Date().getFullYear()} SUNAINA</span>
           <span>//</span>
           <span>GRAPHIC DESIGNER</span>
           <span>//</span>
@@ -1088,7 +1394,7 @@ export default function PortfolioClient({
           <span>EDITORIAL</span>
           <span>//</span>
           {/* Duplicate for seamless loop */}
-          <span>© 2024 SUNAINA</span>
+          <span>© {new Date().getFullYear()} SUNAINA</span>
           <span>//</span>
           <span>GRAPHIC DESIGNER</span>
           <span>//</span>
@@ -1122,17 +1428,56 @@ export default function PortfolioClient({
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               transition={{ type: "spring", damping: 30, stiffness: 200 }}
-              className="absolute inset-4 md:inset-12 flex items-center justify-center"
+              className="absolute inset-x-4 top-20 bottom-28 md:inset-x-24 md:top-12 md:bottom-32 flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              {selectedProject.posterAsset && (
-                <img
-                  src={selectedProject.posterAsset}
-                  alt={selectedProject.title}
-                  className="max-w-full max-h-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,1)]"
-                />
-              )}
+              <ProjectMedia
+                key={selectedProject.id}
+                src={selectedProject.posterAsset}
+                alt={selectedProject.title}
+                className="max-w-full max-h-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,1)]"
+              />
             </motion.div>
+
+            {/* Bottom caption + gallery navigation */}
+            <div
+              className="absolute bottom-4 md:bottom-8 left-4 right-4 md:left-12 md:right-12 z-20 flex items-end justify-between gap-4 pointer-events-none"
+            >
+              <div className="min-w-0 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                <span className="block text-[11px] font-mono uppercase tracking-widest text-white/40">
+                  {selectedProject.client} · {selectedProject.category} · {selectedProject.year}
+                </span>
+                <span className="block text-xl md:text-3xl font-display text-white truncate">{selectedProject.title}</span>
+                <a
+                  href="#contact"
+                  onClick={() => { setSelectedProject(null); setIsDrawerOpen(false); }}
+                  className="inline-flex items-center gap-1.5 mt-2 text-[11px] font-mono uppercase tracking-widest text-[#c8956c] hover:text-white transition-colors"
+                >
+                  Want something like this? Let&apos;s talk <ArrowUpRight size={12} />
+                </a>
+              </div>
+              {filteredProjects.length > 1 && selectedIndex >= 0 && (
+                <div className="flex items-center gap-3 shrink-0 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+                  <span className="hidden sm:block text-[11px] font-mono text-white/40 tabular-nums">
+                    {String(selectedIndex + 1).padStart(2, "0")} / {String(filteredProjects.length).padStart(2, "0")}
+                  </span>
+                  <button
+                    onClick={() => stepProject(-1)}
+                    aria-label="Previous project"
+                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 transition-colors"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={() => stepProject(1)}
+                    aria-label="Next project"
+                    className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 transition-colors"
+                  >
+                    →
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Floating Top Controls */}
             <div className="absolute top-6 right-6 md:top-12 md:right-12 z-20 flex gap-4" onClick={(e) => e.stopPropagation()}>

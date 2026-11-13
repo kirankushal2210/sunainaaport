@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Space_Grotesk } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -7,7 +7,7 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   variable: "--font-display",
 });
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
 });
@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${instrumentSerif.variable} ${spaceGrotesk.variable}`}
+        className={`${instrumentSerif.variable} ${inter.variable}`}
       >
         {children}
       </body>
